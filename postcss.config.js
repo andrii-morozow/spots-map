@@ -8,5 +8,6 @@ module.exports = {
       preset: "default",
     },
     autoprefixer: {},
+    "@tailwindcss/postcss": {},
   },
 };
