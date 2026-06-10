@@ -46,4 +46,12 @@ export default defineConfig([
     },
   },
   pluginReact.configs.flat.recommended,
+  {
+    files: ["**/*.{js,ts,jsx,tsx}"],
+    settings: { react: { version: "detect" } },
+    rules: {
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
+    },
+  },
 ]);
