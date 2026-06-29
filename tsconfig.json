@@ -60,6 +60,8 @@
     "next-env.d.ts",
     "packages.d.ts",
     ".next/types/**/*.ts",
-    "dist/spotsmap/types/**/*.ts"
+    "dist/spotsmap/types/**/*.ts",
+    "dist/types/**/*.ts",
+    "dist/dev/types/**/*.ts"
   ]
 }
