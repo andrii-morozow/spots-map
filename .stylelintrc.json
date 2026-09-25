@@ -1,7 +1,25 @@
 {
   "extends": "stylelint-config-standard",
-  "customSyntax": "postcss-styled-syntax",
   "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "source",
+          "utility",
+          "variant",
+          "custom-variant",
+          "apply",
+          "reference",
+          "config",
+          "plugin"
+        ]
+      }
+    ],
+    "import-notation": "string",
+    "lightness-notation": "number",
+    "hue-degree-notation": "number",
     "selector-class-pattern": null,
     "media-query-no-invalid": null
   }

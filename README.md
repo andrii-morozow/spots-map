@@ -1,38 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Spots Map
 
-## Getting Started
+Next.js App Router application using React, TypeScript, Tailwind CSS, and shadcn/ui.
 
-First, run the development server:
+## Development
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+Use Node.js 22.13+ within the 22.x release line, or Node.js 24+, and pnpm 10.20.0
+(declared in `package.json`). Commit `pnpm-lock.yaml` when dependencies change.
+
+```sh
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000). Routes live in `src/app`, shared
+components in `components`, and custom CSS in `src/styles`. The `@/` alias points
+to the project root and is shared by TypeScript, Next.js, and Vitest.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+| Command | Purpose |
+| --- | --- |
+| `pnpm lint` | Check JavaScript and TypeScript |
+| `pnpm lint:styles` | Check CSS, including Tailwind directives |
+| `pnpm lint:styles:fix` | Fix supported CSS lint issues |
+| `pnpm type-check` | Generate Next.js route types and check TypeScript, including tests |
+| `pnpm test` | Run Vitest in watch mode |
+| `pnpm test:run` | Run tests once, suitable for CI |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Vitest uses jsdom, React Testing Library, and jest-dom assertions. Tests are
+`*.test.ts(x)` or `*.spec.ts(x)` files under `src`, `components`, or `lib`.
+`vitest.setup.ts` registers matchers and cleans up rendered components after each
+test. Import test functions from `vitest`; test globals are not enabled.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This setup covers utilities and synchronous React components. Async Server
+Components need browser/end-to-end tests instead.
 
-## Learn More
+## Production preview
 
-To learn more about Next.js, take a look at the following resources:
+```sh
+pnpm build
+pnpm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The app uses `output: "export"` and exports static files into `dist/`.
+`pnpm start` serves that directory on port 3000. Deploy its contents to a static
+host; a Next.js runtime server is not required.

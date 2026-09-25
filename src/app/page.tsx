@@ -11,6 +11,12 @@ export default function Home() {
         >
           Admin
         </Link>
+        <Link
+          href="/public"
+          className="inline-flex h-10 items-center justify-center rounded-4xl bg-primary px-4 text-sm font-medium text-primary-foreground"
+        >
+          Public
+        </Link>
       </div>
     </main>
   );
