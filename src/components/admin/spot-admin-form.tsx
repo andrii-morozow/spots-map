@@ -260,7 +260,11 @@ export function SpotAdminForm() {
                           Add image URLs for the spot gallery.
                         </div>
                       </div>
-                      <Button type="button" variant="secondary" onClick={addPhoto}>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={addPhoto}
+                      >
                         Add photo
                       </Button>
                     </div>
@@ -269,7 +273,9 @@ export function SpotAdminForm() {
                         <Input
                           key={`${index}-${photo}`}
                           value={photo}
-                          onChange={(event) => updatePhoto(index, event.target.value)}
+                          onChange={(event) =>
+                            updatePhoto(index, event.target.value)
+                          }
                           placeholder={`Photo URL ${index + 1}`}
                         />
                       ))}
@@ -291,7 +297,9 @@ export function SpotAdminForm() {
                       <Input
                         id="city"
                         value={formData.city}
-                        onChange={(event) => updateField("city", event.target.value)}
+                        onChange={(event) =>
+                          updateField("city", event.target.value)
+                        }
                         placeholder="Barcelona"
                       />
                     </Field>
@@ -338,7 +346,10 @@ export function SpotAdminForm() {
                       <Select
                         value={formData.difficulty}
                         onValueChange={(value) =>
-                          updateField("difficulty", value as SpotFormState["difficulty"])
+                          updateField(
+                            "difficulty",
+                            value as SpotFormState["difficulty"],
+                          )
                         }
                       >
                         <SelectTrigger id="difficulty" className="w-full">
@@ -356,7 +367,10 @@ export function SpotAdminForm() {
                       <Select
                         value={formData.status}
                         onValueChange={(value) =>
-                          updateField("status", value as SpotFormState["status"])
+                          updateField(
+                            "status",
+                            value as SpotFormState["status"],
+                          )
                         }
                       >
                         <SelectTrigger id="status" className="w-full">
@@ -370,11 +384,17 @@ export function SpotAdminForm() {
                       </Select>
                     </Field>
                   </div>
-                  <Field label="Created by" htmlFor="created-by" hint="Optional">
+                  <Field
+                    label="Created by"
+                    htmlFor="created-by"
+                    hint="Optional"
+                  >
                     <Input
                       id="created-by"
                       value={formData.createdBy}
-                      onChange={(event) => updateField("createdBy", event.target.value)}
+                      onChange={(event) =>
+                        updateField("createdBy", event.target.value)
+                      }
                       placeholder="user-id-or-email"
                     />
                   </Field>
@@ -392,7 +412,9 @@ export function SpotAdminForm() {
                             key={option}
                             checked={formData.sportTypes.includes(option)}
                             label={option}
-                            onCheckedChange={() => toggleTag("sportTypes", option)}
+                            onCheckedChange={() =>
+                              toggleTag("sportTypes", option)
+                            }
                           />
                         ))}
                       </div>
@@ -410,7 +432,9 @@ export function SpotAdminForm() {
                             key={option}
                             checked={formData.spotTypes.includes(option)}
                             label={option}
-                            onCheckedChange={() => toggleTag("spotTypes", option)}
+                            onCheckedChange={() =>
+                              toggleTag("spotTypes", option)
+                            }
                           />
                         ))}
                       </div>
@@ -428,13 +452,15 @@ export function SpotAdminForm() {
                       <div className="flex items-center justify-between gap-4">
                         <span>Coordinates</span>
                         <span className="text-foreground">
-                          {formData.latitude || "-"}, {formData.longitude || "-"}
+                          {formData.latitude || "-"},{" "}
+                          {formData.longitude || "-"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-4">
                         <span>Tags</span>
                         <span className="text-foreground">
-                          {formData.sportTypes.length + formData.spotTypes.length}
+                          {formData.sportTypes.length +
+                            formData.spotTypes.length}
                         </span>
                       </div>
                     </div>
@@ -470,7 +496,9 @@ export function SpotAdminForm() {
                   <div className="pl-3">
                     sport_types: {formData.sportTypes.length},
                   </div>
-                  <div className="pl-3">spot_types: {formData.spotTypes.length}</div>
+                  <div className="pl-3">
+                    spot_types: {formData.spotTypes.length}
+                  </div>
                   <div>{"}"}</div>
                 </div>
                 <Button
@@ -546,7 +574,9 @@ function Field({
     <label htmlFor={htmlFor} className="grid gap-2">
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium">{label}</span>
-        {hint ? <span className="text-xs text-muted-foreground">{hint}</span> : null}
+        {hint ? (
+          <span className="text-xs text-muted-foreground">{hint}</span>
+        ) : null}
       </div>
       {children}
     </label>
@@ -576,7 +606,9 @@ function TagRow({
       <span
         className={cn(
           "flex size-4 items-center justify-center rounded-[6px] border transition-colors",
-          checked ? "border-background bg-background" : "border-border bg-transparent",
+          checked
+            ? "border-background bg-background"
+            : "border-border bg-transparent",
         )}
       >
         <span
