@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SpotAdminForm } from "@/components/admin/spot-admin-form";
+import { SpotForm } from "@/components/admin/spot-form/spot-form";
 import { Map } from "@/components/map/map";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function AdminPage() {
   return (
     <div className="grid grid-cols-2 min-h-screen">
-      <SpotAdminForm />
+      <SpotForm />
       <Map />
     </div>
   );

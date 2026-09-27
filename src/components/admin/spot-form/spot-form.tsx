@@ -2,17 +2,13 @@
 
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
-import { StatePreview } from "@/components/dev/state-preview";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -24,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-type Step = 1 | 2;
+type Step = 1 | 2 | 3;
 type SpotFormState = {
   title: string;
   slug: string;
@@ -62,11 +58,10 @@ const initialState: SpotFormState = {
   createdBy: "",
 };
 
-export function SpotAdminForm() {
+export function SpotForm() {
   const [step, setStep] = useState<Step>(1);
   const [formData, setFormData] = useState<SpotFormState>(initialState);
 
-  const progress = step === 1 ? 50 : 100;
   const canContinue =
     formData.title.trim().length > 0 &&
     formData.latitude.trim().length > 0 &&
@@ -144,29 +139,21 @@ export function SpotAdminForm() {
 
   return (
     <main className="min-h-screen ,radial-gradient(circle_at_top_right,oklch(0.95_0.05_220),transparent_28%),linear-gradient(180deg,oklch(0.99_0_0),oklch(0.97_0_0))] px-4 py-8 text-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <section className="flex flex-col gap-3 rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur sm:p-8">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex w-full max-w-6xl flex-col gap-6 text-left">
+        <section className="flex flex-col gap-3 rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur">
+          <div className="flex flex-col items-start gap-2">
             <div className="max-w-2xl space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
                 Spot admin
               </p>
               <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                Add a new spot
+                Add spot
               </h1>
-              <p className="text-sm text-muted-foreground sm:text-base">
-                Two-step creation flow for core metadata, photos, location, and
-                classification fields.
-              </p>
             </div>
-            <div className="grid grid-cols-3 gap-3 text-sm">
+            <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="rounded-2xl border border-border/60 bg-background/70 px-4 py-3">
                 <div className="text-muted-foreground">Step</div>
-                <div className="text-lg font-semibold">{step} / 2</div>
-              </div>
-              <div className="rounded-2xl border border-border/60 bg-background/70 px-4 py-3">
-                <div className="text-muted-foreground">Photos</div>
-                <div className="text-lg font-semibold">{photos.length}</div>
+                <div className="text-lg font-semibold">{step} / 3</div>
               </div>
               <div className="rounded-2xl border border-border/60 bg-background/70 px-4 py-3">
                 <div className="text-muted-foreground">Status</div>
@@ -176,47 +163,12 @@ export function SpotAdminForm() {
               </div>
             </div>
           </div>
-          <Progress value={progress} className="h-2" />
         </section>
         <form
           onSubmit={handleSubmit}
-          className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]"
+          className="grid min-w-0 grid-cols-1 gap-6"
         >
           <Card className="border-border/60 bg-card/85 shadow-xl backdrop-blur">
-            <CardHeader className="space-y-3 border-b border-border/60">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <CardTitle>
-                    {step === 1
-                      ? "Step 1. Identity and location"
-                      : "Step 2. Rate params"}
-                  </CardTitle>
-                  <CardDescription>
-                    {step === 1
-                      ? "Name the spot, attach media, and pin it on the map."
-                      : "Set classification fields that drive moderation and discovery."}
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setStep(1)}
-                    disabled={step === 1}
-                  >
-                    1
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setStep(2)}
-                    disabled={!canContinue}
-                  >
-                    2
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
             <CardContent className="space-y-6 p-6">
               {step === 1 ? (
                 <div className="grid gap-5">
@@ -469,52 +421,23 @@ export function SpotAdminForm() {
                 </div>
               )}
             </CardContent>
+            <CardFooter className="justify-start border-t border-border/60">
+              {step === 1 ? (
+                <Button
+                  key="next"
+                  type="button"
+                  disabled={!canContinue}
+                  onClick={() => setStep(2)}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button key="submit" type="submit">
+                  Submit
+                </Button>
+              )}
+            </CardFooter>
           </Card>
-          <div className="space-y-6">
-            <StatePreview
-              formData={formData}
-              photoCount={photos.length}
-              onReset={() => setFormData(initialState)}
-            />
-            <Card className="border-border/60 bg-card/85 shadow-xl backdrop-blur">
-              <CardHeader>
-                <CardTitle>Submission</CardTitle>
-                <CardDescription>
-                  Step through the form and then publish the payload.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    disabled={step === 1}
-                    onClick={() => setStep(1)}
-                  >
-                    Back
-                  </Button>
-                  {step === 1 ? (
-                    <Button
-                      type="button"
-                      className="flex-1"
-                      disabled={!canContinue}
-                      onClick={() => setStep(2)}
-                    >
-                      Next
-                    </Button>
-                  ) : (
-                    <Button type="submit" className="flex-1">
-                      Save spot
-                    </Button>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  The form currently logs a normalized payload to the console.
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </form>
       </div>
     </main>
