@@ -10,8 +10,12 @@ describe("SpotForm", () => {
 
     const next = screen.getByRole("button", { name: "Next" });
     expect(next).toBeDisabled();
-    expect(screen.queryByRole("button", { name: "Back" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Submit" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Back" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Submit" }),
+    ).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText("Name"), "North Point Skatepark");
     await user.type(screen.getByLabelText("Latitude"), "41.3851");
@@ -20,21 +24,35 @@ describe("SpotForm", () => {
     await user.type(screen.getByLabelText("Longitude"), "2.1734");
     expect(next).toBeEnabled();
     await user.click(next);
+    expect(screen.getByLabelText("Difficulty")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Submit" }),
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: "Submit" }),
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByLabelText("Name")).toHaveValue("North Point Skatepark");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByPlaceholderText("Photo URL 1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
 
-    expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Back" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Next" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Back" }),
+    ).not.toBeInTheDocument();
 
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     try {
       await user.click(screen.getByRole("button", { name: "Submit" }));
-      expect(log).toHaveBeenCalledWith("spot payload", expect.objectContaining({
-        title: "North Point Skatepark",
-        latitude: 41.3851,
-        longitude: 2.1734,
-      }));
+      expect(log).toHaveBeenCalledWith(
+        "spot payload",
+        expect.objectContaining({
+          title: "North Point Skatepark",
+          latitude: 41.3851,
+          longitude: 2.1734,
+        }),
+      );
       expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
       expect(screen.getByLabelText("Name")).toHaveValue("");
     } finally {
@@ -42,9 +60,14 @@ describe("SpotForm", () => {
     }
   });
 
-  it("lets the user add another photo URL field", async () => {
+  it("lets the user add and edit photo URLs on step 3", async () => {
     const user = userEvent.setup();
     render(<SpotForm />);
+    await user.type(screen.getByLabelText("Name"), "Spot");
+    await user.type(screen.getByLabelText("Latitude"), "41");
+    await user.type(screen.getByLabelText("Longitude"), "2");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await user.click(screen.getByRole("button", { name: "Next" }));
 
     expect(
       screen.queryByPlaceholderText("Photo URL 2"),
@@ -53,5 +76,12 @@ describe("SpotForm", () => {
 
     expect(screen.getByPlaceholderText("Photo URL 1")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Photo URL 2")).toHaveValue("");
+    await user.type(
+      screen.getByPlaceholderText("Photo URL 1"),
+      "https://example.com/spot.jpg",
+    );
+    expect(screen.getByPlaceholderText("Photo URL 1")).toHaveValue(
+      "https://example.com/spot.jpg",
+    );
   });
 });
