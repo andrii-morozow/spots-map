@@ -1,21 +1,21 @@
-export type SpotFormState = {
-  title: string;
-  slug: string;
+import type { Spot } from "@/types/spot";
+
+export type SpotFormValues = Pick<
+  Spot,
+  "title" | "photos" | "difficulty" | "status"
+> & {
   description: string;
-  photos: string[];
   latitude: string;
   longitude: string;
   address: string;
   city: string;
   country: string;
-  sportTypes: string[];
-  spotTypes: string[];
-  difficulty: "easy" | "medium" | "hard" | "unknown";
-  status: "draft" | "published" | "archived";
+  sportTypes: Spot["sport_types"];
+  spotTypes: Spot["spot_types"];
   createdBy: string;
 };
 
-export type UpdateSpotField = <K extends keyof SpotFormState>(
+export type UpdateSpotField = <K extends keyof SpotFormValues>(
   key: K,
-  value: SpotFormState[K],
+  value: SpotFormValues[K],
 ) => void;

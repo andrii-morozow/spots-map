@@ -8,18 +8,18 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Field } from "../field/field";
-import type { SpotFormState, UpdateSpotField } from "../spot-form.types";
+import type { SpotFormValues, UpdateSpotField } from "../spot-form.types";
 
-const sportOptions = ["skate", "bmx", "surf", "climb", "basketball", "fitness"];
-const spotOptions = ["park", "street", "indoor", "outdoor", "plaza", "bowls"];
+import { sportTypes } from "@/constants/spot";
+import type { SportType } from "@/types/spot";
 
 type RateStepProps = {
-  formData: SpotFormState;
+  formData: SpotFormValues;
   updateField: UpdateSpotField;
-  toggleTag: (key: "sportTypes" | "spotTypes", value: string) => void;
+  toggleSport: (value: SportType) => void;
 };
 
-export function RateStep({ formData, updateField, toggleTag }: RateStepProps) {
+export function RateStep({ formData, updateField, toggleSport }: RateStepProps) {
   return (
     <div className="grid gap-6">
       <div className="grid gap-4 md:grid-cols-2">
@@ -27,7 +27,7 @@ export function RateStep({ formData, updateField, toggleTag }: RateStepProps) {
           <Select
             value={formData.difficulty}
             onValueChange={(value) =>
-              updateField("difficulty", value as SpotFormState["difficulty"])
+              updateField("difficulty", value as SpotFormValues["difficulty"])
             }
           >
             <SelectTrigger id="difficulty" className="w-full">
@@ -45,7 +45,7 @@ export function RateStep({ formData, updateField, toggleTag }: RateStepProps) {
           <Select
             value={formData.status}
             onValueChange={(value) =>
-              updateField("status", value as SpotFormState["status"])
+              updateField("status", value as SpotFormValues["status"])
             }
           >
             <SelectTrigger id="status" className="w-full">
@@ -76,30 +76,12 @@ export function RateStep({ formData, updateField, toggleTag }: RateStepProps) {
             </div>
           </div>
           <div className="grid gap-2">
-            {sportOptions.map((option) => (
+            {sportTypes.map((option) => (
               <TagRow
                 key={option}
                 checked={formData.sportTypes.includes(option)}
                 label={option}
-                onCheckedChange={() => toggleTag("sportTypes", option)}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="space-y-3">
-          <div>
-            <div className="text-sm font-medium">Spot types</div>
-            <div className="text-xs text-muted-foreground">
-              Pick the physical layout and environment tags.
-            </div>
-          </div>
-          <div className="grid gap-2">
-            {spotOptions.map((option) => (
-              <TagRow
-                key={option}
-                checked={formData.spotTypes.includes(option)}
-                label={option}
-                onCheckedChange={() => toggleTag("spotTypes", option)}
+                onCheckedChange={() => toggleSport(option)}
               />
             ))}
           </div>

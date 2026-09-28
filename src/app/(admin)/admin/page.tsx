@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AdminPage() {
   return (
-    <div className="grid grid-cols-2 min-h-screen">
+    <div className="grid h-dvh min-h-0 grid-cols-2 overflow-hidden">
       <SpotForm />
       <Map />
     </div>

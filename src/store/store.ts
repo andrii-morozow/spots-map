@@ -1,25 +1,21 @@
-export const spot = {
-  id: "",
-  name: "",
-  type: "",
-  description: "",
-  address: "",
-  coord: {
-    lat: "",
-    long: "",
-  },
-  difficulty: 5,
-  accessibility: 5,
-  entrance: 5,
-  landing: 5,
-};
+import type { Spot } from "@/types/spot";
 
-export const spotTypes = [
-  "rail",
-  "kinkrail",
-  "ledge",
-  "kinkledge",
-  "gap",
-  "skatepark",
-  "wallride",
-];
+export const spot: Spot = {
+  id: "mock-spot",
+  title: "Example skatepark",
+  slug: "example-skatepark",
+  description: null,
+  address: null,
+  city: null,
+  country: null,
+  latitude: 50.45,
+  longitude: 30.523333,
+  sport_types: ["skate"],
+  spot_types: ["skatepark"],
+  difficulty: "unknown",
+  status: "draft",
+  created_by: null,
+  photos: [],
+  created_at: "2026-01-01T00:00:00.000Z",
+  updated_at: "2026-01-01T00:00:00.000Z",
+};

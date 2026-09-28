@@ -17,6 +17,9 @@ describe("SpotForm", () => {
       screen.queryByRole("button", { name: "Submit" }),
     ).not.toBeInTheDocument();
 
+    screen.getByRole("combobox", { name: "Type" }).focus();
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{Enter}");
     await user.type(screen.getByLabelText("Name"), "North Point Skatepark");
     await user.type(screen.getByLabelText("Latitude"), "41.3851");
     expect(next).toBeDisabled();
@@ -30,6 +33,9 @@ describe("SpotForm", () => {
     ).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Back" }));
     expect(screen.getByLabelText("Name")).toHaveValue("North Point Skatepark");
+    expect(screen.getByRole("combobox", { name: "Type" })).toHaveTextContent(
+      "rail",
+    );
     await user.click(screen.getByRole("button", { name: "Next" }));
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByPlaceholderText("Photo URL 1")).toBeInTheDocument();
@@ -49,6 +55,10 @@ describe("SpotForm", () => {
         "spot payload",
         expect.objectContaining({
           title: "North Point Skatepark",
+          spot_types: ["rail"],
+          slug: "north-point-skatepark",
+          description: null,
+          photos: [],
           latitude: 41.3851,
           longitude: 2.1734,
         }),

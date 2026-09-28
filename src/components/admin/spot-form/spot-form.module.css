@@ -1,0 +1,27 @@
+.panel {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding-top: clamp(24px, calc(100dvh - 848px), 144px);
+  padding-bottom: 24px;
+}
+
+.content,
+.step {
+  gap: 48px;
+}
+
+.step {
+  display: grid;
+}
+
+@media (height <= 880px) {
+  .panel {
+    padding-block: 24px;
+  }
+
+  .content,
+  .step {
+    gap: 24px;
+  }
+}

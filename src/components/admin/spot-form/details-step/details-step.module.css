@@ -1,0 +1,55 @@
+.fields {
+  display: grid;
+  gap: 24px;
+}
+
+.fields label {
+  min-width: 0;
+  gap: 8px;
+}
+
+.fields label > div > span:first-child {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.fields input,
+.fields textarea {
+  border-radius: 12px;
+  border-color: var(--input);
+  background: transparent;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.fields input {
+  height: 40px;
+  padding: 9px 15px;
+}
+
+.fields textarea {
+  field-sizing: fixed;
+  height: 120px;
+  padding: 12px 15px;
+}
+
+.fields input::placeholder,
+.fields textarea::placeholder {
+  color: #737373;
+}
+
+.fields input:focus-visible,
+.fields textarea:focus-visible {
+  border-color: var(--ring);
+}
+
+@media (height <= 880px) {
+  .fields {
+    gap: 16px;
+  }
+
+  .fields textarea {
+    height: 80px;
+  }
+}
