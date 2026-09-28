@@ -3,13 +3,7 @@
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -140,7 +134,7 @@ export function SpotForm() {
   return (
     <main className="min-h-screen ,radial-gradient(circle_at_top_right,oklch(0.95_0.05_220),transparent_28%),linear-gradient(180deg,oklch(0.99_0_0),oklch(0.97_0_0))] px-4 py-8 text-foreground sm:px-6 lg:px-8">
       <div className="flex w-full max-w-6xl flex-col gap-6 text-left">
-        <section className="flex flex-col gap-3 rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur">
+        <section className="flex flex-col gap-3">
           <div className="flex flex-col items-start gap-2">
             <div className="max-w-2xl space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
@@ -151,11 +145,11 @@ export function SpotForm() {
               </h1>
             </div>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-2xl border border-border/60 bg-background/70 px-4 py-3">
+              <div>
                 <div className="text-muted-foreground">Step</div>
                 <div className="text-lg font-semibold">{step} / 3</div>
               </div>
-              <div className="rounded-2xl border border-border/60 bg-background/70 px-4 py-3">
+              <div>
                 <div className="text-muted-foreground">Status</div>
                 <div className="text-lg font-semibold capitalize">
                   {formData.status}
@@ -168,8 +162,8 @@ export function SpotForm() {
           onSubmit={handleSubmit}
           className="grid min-w-0 grid-cols-1 gap-6"
         >
-          <Card className="border-border/60 bg-card/85 shadow-xl backdrop-blur">
-            <CardContent className="space-y-6 p-6">
+          <div className="space-y-6">
+            <div className="space-y-6">
               {step === 1 ? (
                 <div className="grid gap-5">
                   <div className="grid gap-4 md:grid-cols-2">
@@ -234,7 +228,7 @@ export function SpotForm() {
                       ))}
                     </div>
                   </div>
-                  <Separator />
+
                   <div className="grid gap-4 md:grid-cols-2">
                     <Field label="Address" htmlFor="address">
                       <Input
@@ -393,7 +387,7 @@ export function SpotForm() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-border/60 bg-muted/30 p-4">
+                  <div>
                     <div className="text-sm font-medium">Quick review</div>
                     <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
                       <div className="flex items-center justify-between gap-4">
@@ -420,8 +414,8 @@ export function SpotForm() {
                   </div>
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="justify-start border-t border-border/60">
+            </div>
+            <div className="flex items-center justify-start">
               {step === 1 ? (
                 <Button
                   key="next"
@@ -436,8 +430,8 @@ export function SpotForm() {
                   Submit
                 </Button>
               )}
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </form>
       </div>
     </main>
