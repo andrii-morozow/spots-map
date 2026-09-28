@@ -23,6 +23,7 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
       <Field label="Name" htmlFor="title">
         <Input
           id="title"
+          required
           value={formData.title}
           onChange={(event) => updateField("title", event.target.value)}
           placeholder="North Point Skatepark"
@@ -30,6 +31,7 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
       </Field>
       <Field label="Type" htmlFor="spot-type">
         <Select
+          required
           value={formData.spotTypes[0] ?? ""}
           onValueChange={(value) => {
             const type = spotTypes.find((option) => option === value);
@@ -80,6 +82,7 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
         <Field label="City" htmlFor="city">
           <Input
             id="city"
+            required
             value={formData.city}
             onChange={(event) => updateField("city", event.target.value)}
             placeholder="Barcelona"
@@ -90,6 +93,7 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
         <Field label="Latitude" htmlFor="latitude">
           <Input
             id="latitude"
+            required
             inputMode="decimal"
             value={formData.latitude}
             onChange={(event) => updateField("latitude", event.target.value)}
@@ -99,6 +103,7 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
         <Field label="Longitude" htmlFor="longitude">
           <Input
             id="longitude"
+            required
             inputMode="decimal"
             value={formData.longitude}
             onChange={(event) => updateField("longitude", event.target.value)}

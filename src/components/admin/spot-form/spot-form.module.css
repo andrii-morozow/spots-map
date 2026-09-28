@@ -25,3 +25,7 @@
     gap: 24px;
   }
 }
+
+.ratingPanel {
+  padding-top: clamp(24px, calc(100dvh - 756px), 144px);
+}

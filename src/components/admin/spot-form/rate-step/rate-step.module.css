@@ -1,0 +1,71 @@
+.ratings {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: 4px;
+  padding: 0;
+  color: #737373;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: min(100%, 306px);
+  height: 48px;
+  overflow: hidden;
+  border: 1px solid #262626;
+  border-radius: 12px;
+  background: #171717;
+}
+
+.option {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.option + .option {
+  border-left: 1px solid #262626;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #737373;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.option:hover .value {
+  background: #262626;
+}
+
+.input:checked + .value {
+  background: #666;
+  color: #fff;
+}
+
+.input:focus-visible + .value {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}

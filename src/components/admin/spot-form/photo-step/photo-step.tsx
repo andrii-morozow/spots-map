@@ -14,7 +14,7 @@ export function PhotoStep({ photos, addPhoto, updatePhoto }: PhotoStepProps) {
         <div>
           <div className="text-sm font-medium">Photos</div>
           <div className="text-xs text-muted-foreground">
-            Add image URLs for the spot gallery.
+            Add at least one image URL for the spot gallery.
           </div>
         </div>
         <Button type="button" variant="secondary" onClick={addPhoto}>
@@ -25,6 +25,7 @@ export function PhotoStep({ photos, addPhoto, updatePhoto }: PhotoStepProps) {
         {photos.map((photo, index) => (
           <Input
             key={index}
+            aria-label={`Photo URL ${index + 1}`}
             value={photo}
             onChange={(event) => updatePhoto(index, event.target.value)}
             placeholder={`Photo URL ${index + 1}`}

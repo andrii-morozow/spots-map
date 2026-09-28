@@ -7,7 +7,13 @@ import { DetailsStep } from "./details-step/details-step";
 import { RateStep } from "./rate-step/rate-step";
 import { PhotoStep } from "./photo-step/photo-step";
 import type { SpotFormValues } from "./spot-form.types";
-import type { SportType } from "@/types/spot";
+import {
+  hasRequiredDetails,
+  getDetailsErrors,
+  getRatingErrors,
+  hasRequiredRatings,
+  hasRequiredPhotos,
+} from "./spot-form.validation";
 import styles from "./spot-form.module.css";
 import { toSpot } from "./spot-form.utils";
 
@@ -23,7 +29,10 @@ const initialState: SpotFormValues = {
   country: "",
   sportTypes: [],
   spotTypes: [],
-  difficulty: "unknown",
+  difficulty: null,
+  availability: null,
+  entrance: null,
+  landing: null,
   status: "draft",
   createdBy: "",
 };
@@ -32,10 +41,17 @@ export function SpotForm() {
   const [step, setStep] = useState<Step>(1);
   const [formData, setFormData] = useState<SpotFormValues>(initialState);
 
-  const canContinue =
-    formData.title.trim().length > 0 &&
-    formData.latitude.trim().length > 0 &&
-    formData.longitude.trim().length > 0;
+  const errors =
+    step === 1
+      ? getDetailsErrors(formData)
+      : step === 2
+        ? getRatingErrors(formData)
+        : [];
+
+  const detailsValid = hasRequiredDetails(formData);
+  const ratingsValid = hasRequiredRatings(formData);
+  const photosValid = hasRequiredPhotos(formData);
+  const canSubmit = detailsValid && ratingsValid && photosValid;
 
   const updateField = <K extends keyof SpotFormValues>(
     key: K,
@@ -56,20 +72,24 @@ export function SpotForm() {
     setFormData((current) => ({ ...current, photos: [...current.photos, ""] }));
   };
 
-  const toggleSport = (value: SportType) => {
-    setFormData((current) => {
-      const hasValue = current.sportTypes.includes(value);
-      return {
-        ...current,
-        sportTypes: hasValue
-          ? current.sportTypes.filter((item) => item !== value)
-          : [...current.sportTypes, value],
-      };
-    });
+  const handleNext = () => {
+    if (errors.length) {
+      return;
+    }
+    setStep(step === 1 ? 2 : 3);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!detailsValid) {
+      setStep(1);
+      return;
+    }
+    if (!ratingsValid) {
+      setStep(2);
+      return;
+    }
+    if (!photosValid || step !== 3) return;
 
     const payload = toSpot(formData, {
       id: crypto.randomUUID(),
@@ -83,7 +103,7 @@ export function SpotForm() {
 
   return (
     <main
-      className={`${styles.panel} bg-background px-6 text-foreground lg:px-10`}
+      className={`${styles.panel} ${step === 2 ? styles.ratingPanel : ""} bg-background px-6 text-foreground lg:px-10`}
     >
       <div
         className={`${styles.content} mx-auto flex w-full max-w-lg flex-col text-left`}
@@ -94,6 +114,7 @@ export function SpotForm() {
         </header>
         <form
           onSubmit={handleSubmit}
+          noValidate
           className="grid min-w-0 grid-cols-1 gap-6"
         >
           <div className={styles.step}>
@@ -101,11 +122,7 @@ export function SpotForm() {
               {step === 1 ? (
                 <DetailsStep formData={formData} updateField={updateField} />
               ) : step === 2 ? (
-                <RateStep
-                  formData={formData}
-                  updateField={updateField}
-                  toggleSport={toggleSport}
-                />
+                <RateStep formData={formData} updateField={updateField} />
               ) : (
                 <PhotoStep
                   photos={formData.photos}
@@ -114,31 +131,47 @@ export function SpotForm() {
                 />
               )}
             </div>
-            <div className="flex items-center justify-start gap-3">
-              {step < 3 ? (
-                <Button
-                  className="min-w-[117px]"
-                  key="next"
-                  type="button"
-                  disabled={!canContinue}
-                  onClick={() => setStep(step === 1 ? 2 : 3)}
+            <div className="space-y-3">
+              {errors.length > 0 && (
+                <div
+                  id="step-errors"
+                  role="status"
+                  className="text-xs text-muted-foreground"
                 >
-                  Next
-                </Button>
-              ) : (
-                <Button key="submit" type="submit">
-                  Submit
-                </Button>
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </div>
               )}
-              {step === 2 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setStep(1)}
-                >
-                  Back
-                </Button>
-              )}
+              <div className="flex items-center justify-start gap-3">
+                {step < 3 ? (
+                  <Button
+                    className="min-w-[117px]"
+                    key="next"
+                    type="button"
+                    disabled={errors.length > 0}
+                    aria-describedby={errors.length ? "step-errors" : undefined}
+                    onClick={handleNext}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button key="submit" type="submit" disabled={!canSubmit}>
+                    Submit
+                  </Button>
+                )}
+                {step > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      setStep(step === 3 ? 2 : 1);
+                    }}
+                  >
+                    Back
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </form>

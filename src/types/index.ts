@@ -1,1 +1,1 @@
-export type { Spot, SpotType, SportType } from "./spot";
+export type { Spot, Rating, SpotType, SportType } from "./spot";

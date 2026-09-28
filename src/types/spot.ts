@@ -3,6 +3,8 @@ import type { sportTypes, spotTypes } from "@/constants/spot";
 export type SportType = (typeof sportTypes)[number];
 export type SpotType = (typeof spotTypes)[number];
 
+export type Rating = 1 | 2 | 3 | 4 | 5;
+
 export type Spot = {
   id: string;
   title: string;
@@ -15,7 +17,10 @@ export type Spot = {
   country: string | null;
   sport_types: SportType[];
   spot_types: SpotType[];
-  difficulty: "easy" | "medium" | "hard" | "unknown";
+  difficulty: Rating;
+  availability: Rating;
+  entrance: Rating;
+  landing: Rating;
   status: "draft" | "published" | "archived";
   created_by: string | null;
   photos: string[];
