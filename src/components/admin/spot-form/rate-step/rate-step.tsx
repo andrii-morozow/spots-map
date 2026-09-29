@@ -25,7 +25,7 @@ export function RateStep({ formData, updateField, errors }: RateStepProps) {
       {fields.map(({ key, label }) => (
         <fieldset key={key} className={styles.field} aria-invalid={Boolean(errors[key])}>
           <legend className={styles.legend}>{label}<span aria-hidden="true"> *</span></legend>
-          <div className={styles.options}>
+          <div className={styles.options} data-invalid={Boolean(errors[key])}>
             {ratings.map((rating) => (
               <label key={rating} className={styles.option}>
                 <input

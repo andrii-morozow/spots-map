@@ -125,83 +125,81 @@ export function SpotForm() {
   };
 
   return (
-    <main
-      className={`${styles.panel} ${step === 2 ? styles.ratingPanel : ""} bg-background px-6 text-foreground lg:px-10`}
-    >
-      <div
-        className={`${styles.content} mx-auto flex w-full max-w-lg flex-col text-left`}
-      >
-        <header className="flex flex-col gap-4">
+    <main className={`${styles.panel} bg-background text-foreground`}>
+      <div className={`${styles.content} flex w-full flex-col text-left`}>
+        <header className="flex flex-col gap-4 py-0 px-1">
           <h1 className="text-[32px] leading-[30px] font-semibold">Add spot</h1>
           <p className="text-base leading-5 text-neutral-500">Step {step}/3</p>
         </header>
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className={`${styles.form} grid min-w-0 grid-cols-1 gap-6`}
-        >
-          <div className={styles.step}>
-            <div className="space-y-6">
-              {step === 1 ? (
-                <DetailsStep
-                  formData={formData}
-                  updateField={updateField}
-                  errors={showErrors ? formik.errors : {}}
-                />
-              ) : step === 2 ? (
-                <RateStep
-                  formData={formData}
-                  updateField={updateField}
-                  errors={showErrors ? formik.errors : {}}
-                />
-              ) : (
-                <PhotoStep
-                  photos={formData.photos}
-                  invalid={showErrors && !photosValid}
-                  addPhoto={addPhoto}
-                  updatePhoto={updatePhoto}
-                />
-              )}
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-start gap-3">
-                {step < 3 ? (
-                  <Button
-                    className="min-w-[117px]"
-                    key="next"
-                    type="button"
-                    aria-describedby={
-                      showErrors && errors.length ? "step-errors" : undefined
-                    }
-                    onClick={handleNext}
-                  >
-                    Next
-                  </Button>
+        <div className={`${styles.scrollArea} py-0 px-1`} key={step}>
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className={`${styles.form} grid min-w-0 grid-cols-1 gap-6`}
+          >
+            <div className={styles.step}>
+              <div className="space-y-6">
+                {step === 1 ? (
+                  <DetailsStep
+                    formData={formData}
+                    updateField={updateField}
+                    errors={showErrors ? formik.errors : {}}
+                  />
+                ) : step === 2 ? (
+                  <RateStep
+                    formData={formData}
+                    updateField={updateField}
+                    errors={showErrors ? formik.errors : {}}
+                  />
                 ) : (
-                  <Button
-                    key="submit"
-                    type="submit"
-                    disabled={formik.isSubmitting}
-                  >
-                    Submit
-                  </Button>
-                )}
-                {step > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      setShowErrors(false);
-                      setStep(step === 3 ? 2 : 1);
-                    }}
-                  >
-                    Back
-                  </Button>
+                  <PhotoStep
+                    photos={formData.photos}
+                    invalid={showErrors && !photosValid}
+                    addPhoto={addPhoto}
+                    updatePhoto={updatePhoto}
+                  />
                 )}
               </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-start gap-3">
+                  {step < 3 ? (
+                    <Button
+                      className="min-w-[117px]"
+                      key="next"
+                      type="button"
+                      aria-describedby={
+                        showErrors && errors.length ? "step-errors" : undefined
+                      }
+                      onClick={handleNext}
+                    >
+                      Next
+                    </Button>
+                  ) : (
+                    <Button
+                      key="submit"
+                      type="submit"
+                      disabled={formik.isSubmitting}
+                    >
+                      Submit
+                    </Button>
+                  )}
+                  {step > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => {
+                        setShowErrors(false);
+                        setStep(step === 3 ? 2 : 1);
+                      }}
+                    >
+                      Back
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </main>
   );

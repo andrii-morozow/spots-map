@@ -55,7 +55,7 @@ export function DetailsStep({ formData, updateField, errors }: DetailsStepProps)
           <SelectTrigger
             id="spot-type"
             aria-invalid={Boolean(errors.spotTypes)}
-            className="h-10 w-full rounded-xl bg-transparent px-4 text-base capitalize"
+            className="h-10 w-full bg-transparent px-4 text-base capitalize"
           >
             <SelectValue placeholder="Choose type" />
           </SelectTrigger>

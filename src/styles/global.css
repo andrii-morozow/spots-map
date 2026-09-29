@@ -77,7 +77,7 @@
   --destructive: #f87171;
   --border: #404040;
   --input: #404040;
-  --ring: #a855f7;
+  --ring: #4527a0;
   --chart-1: #e5e5e5;
   --chart-2: #a3a3a3;
   --chart-3: #737373;
@@ -93,7 +93,6 @@
   --sidebar-ring: var(--ring);
   --radius: 0.75rem;
 }
-
 
 @layer base {
   * {
