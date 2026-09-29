@@ -2,12 +2,14 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useFormik, type FormikHelpers } from "formik";
 import { Button } from "@/components/ui/button";
 import { DetailsStep } from "./details-step/details-step";
 import { RateStep } from "./rate-step/rate-step";
 import { PhotoStep } from "./photo-step/photo-step";
 import type { SpotFormValues } from "./spot-form.types";
 import {
+  validateSpotForm,
   hasRequiredDetails,
   getDetailsErrors,
   getRatingErrors,
@@ -15,10 +17,10 @@ import {
   hasRequiredPhotos,
 } from "./spot-form.validation";
 import styles from "./spot-form.module.css";
-import { toSpot } from "./spot-form.utils";
+import { saveSpot } from "./spot-form.submit";
 
 type Step = 1 | 2 | 3;
-const initialState: SpotFormValues = {
+const initialValues: SpotFormValues = {
   title: "",
   description: "",
   photos: [""],
@@ -39,7 +41,33 @@ const initialState: SpotFormValues = {
 
 export function SpotForm() {
   const [step, setStep] = useState<Step>(1);
-  const [formData, setFormData] = useState<SpotFormValues>(initialState);
+
+  const submitSpot = (
+    values: SpotFormValues,
+    helpers: FormikHelpers<SpotFormValues>,
+  ) => {
+    if (step !== 3) {
+      helpers.setSubmitting(false);
+      return;
+    }
+    try {
+      saveSpot(values);
+      helpers.resetForm();
+      setStep(1);
+    } finally {
+      helpers.setSubmitting(false);
+    }
+  };
+
+  const formik = useFormik<SpotFormValues>({
+    initialValues,
+    initialErrors: validateSpotForm(initialValues),
+    validate: validateSpotForm,
+    validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: submitSpot,
+  });
+  const formData = formik.values;
 
   const errors =
     step === 1
@@ -51,25 +79,26 @@ export function SpotForm() {
   const detailsValid = hasRequiredDetails(formData);
   const ratingsValid = hasRequiredRatings(formData);
   const photosValid = hasRequiredPhotos(formData);
-  const canSubmit = detailsValid && ratingsValid && photosValid;
+  const canSubmit =
+    detailsValid &&
+    ratingsValid &&
+    photosValid &&
+    formik.isValid &&
+    !formik.isSubmitting;
 
   const updateField = <K extends keyof SpotFormValues>(
     key: K,
     value: SpotFormValues[K],
   ) => {
-    setFormData((current) => ({ ...current, [key]: value }));
+    void formik.setFieldValue(key, value);
   };
 
   const updatePhoto = (index: number, value: string) => {
-    setFormData((current) => {
-      const nextPhotos = [...current.photos];
-      nextPhotos[index] = value;
-      return { ...current, photos: nextPhotos };
-    });
+    void formik.setFieldValue(`photos[${index}]`, value);
   };
 
   const addPhoto = () => {
-    setFormData((current) => ({ ...current, photos: [...current.photos, ""] }));
+    void formik.setFieldValue("photos", [...formik.values.photos, ""]);
   };
 
   const handleNext = () => {
@@ -91,14 +120,7 @@ export function SpotForm() {
     }
     if (!photosValid || step !== 3) return;
 
-    const payload = toSpot(formData, {
-      id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-    });
-
-    console.log("spot payload", payload);
-    setFormData(initialState);
-    setStep(1);
+    formik.handleSubmit(event);
   };
 
   return (
