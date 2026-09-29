@@ -69,3 +69,7 @@
   outline: 2px solid var(--ring);
   outline-offset: -2px;
 }
+
+.field[aria-invalid="true"] .options {
+  border-color: #4527a0;
+}

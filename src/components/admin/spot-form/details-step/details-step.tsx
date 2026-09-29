@@ -1,3 +1,5 @@
+import { useState } from "react";
+import type { FormikErrors } from "formik";
 import styles from "./details-step.module.css";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,21 +17,33 @@ import { spotTypes } from "@/constants/spot";
 type DetailsStepProps = {
   formData: SpotFormValues;
   updateField: UpdateSpotField;
+  errors: FormikErrors<SpotFormValues>;
 };
 
-export function DetailsStep({ formData, updateField }: DetailsStepProps) {
+function formatCoordinate(value: string, limit: number) {
+  const number = Number(value);
+  if (!value.trim() || !Number.isFinite(number) || Math.abs(number) > limit) {
+    return value;
+  }
+  return number.toFixed(6);
+}
+
+export function DetailsStep({ formData, updateField, errors }: DetailsStepProps) {
+  const [editingCoordinate, setEditingCoordinate] = useState<"latitude" | "longitude" | null>(null);
+
   return (
     <div className={styles.fields}>
-      <Field label="Name" htmlFor="title">
+      <Field required label="Name" htmlFor="title">
         <Input
           id="title"
+            aria-invalid={Boolean(errors.title)}
           required
           value={formData.title}
           onChange={(event) => updateField("title", event.target.value)}
           placeholder="North Point Skatepark"
         />
       </Field>
-      <Field label="Type" htmlFor="spot-type">
+      <Field required label="Type" htmlFor="spot-type">
         <Select
           required
           value={formData.spotTypes[0] ?? ""}
@@ -40,6 +54,7 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
         >
           <SelectTrigger
             id="spot-type"
+            aria-invalid={Boolean(errors.spotTypes)}
             className="h-10 w-full rounded-xl bg-transparent px-4 text-base capitalize"
           >
             <SelectValue placeholder="Choose type" />
@@ -79,9 +94,10 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
             placeholder="Spain"
           />
         </Field>
-        <Field label="City" htmlFor="city">
+        <Field required label="City" htmlFor="city">
           <Input
             id="city"
+            aria-invalid={Boolean(errors.city)}
             required
             value={formData.city}
             onChange={(event) => updateField("city", event.target.value)}
@@ -90,24 +106,30 @@ export function DetailsStep({ formData, updateField }: DetailsStepProps) {
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-6">
-        <Field label="Latitude" htmlFor="latitude">
+        <Field required label="Latitude" htmlFor="latitude">
           <Input
             id="latitude"
             required
             inputMode="decimal"
-            value={formData.latitude}
+            value={editingCoordinate === "latitude" ? formData.latitude : formatCoordinate(formData.latitude, 90)}
+            onFocus={() => setEditingCoordinate("latitude")}
+            onBlur={() => setEditingCoordinate(null)}
             onChange={(event) => updateField("latitude", event.target.value)}
-            placeholder="41.3851"
+            placeholder="-90.0000 to 90.0000"
+            aria-invalid={Boolean(errors.latitude)}
           />
         </Field>
-        <Field label="Longitude" htmlFor="longitude">
+        <Field required label="Longitude" htmlFor="longitude">
           <Input
             id="longitude"
             required
             inputMode="decimal"
-            value={formData.longitude}
+            value={editingCoordinate === "longitude" ? formData.longitude : formatCoordinate(formData.longitude, 180)}
+            onFocus={() => setEditingCoordinate("longitude")}
+            onBlur={() => setEditingCoordinate(null)}
             onChange={(event) => updateField("longitude", event.target.value)}
-            placeholder="2.1734"
+            placeholder="-180.0000 to 180.0000"
+            aria-invalid={Boolean(errors.longitude)}
           />
         </Field>
       </div>

@@ -79,7 +79,10 @@ export function getInitialErrors(values: SpotFormValues) {
 }
 
 export function getDetailsErrors(values: SpotFormValues): string[] {
-  return [...new Set(getValidationError(detailsSchema, values)?.errors ?? [])];
+  const errors = getValidationError(detailsSchema, values)?.inner ?? [];
+  return [...new Set(errors
+    .filter((error) => error.path !== "latitude" && error.path !== "longitude")
+    .map((error) => error.message))];
 }
 
 export function getRatingErrors(values: SpotFormValues): string[] {

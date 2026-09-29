@@ -3,19 +3,17 @@ import { Input } from "@/components/ui/input";
 
 type PhotoStepProps = {
   photos: string[];
+  invalid: boolean;
   addPhoto: () => void;
   updatePhoto: (index: number, value: string) => void;
 };
 
-export function PhotoStep({ photos, addPhoto, updatePhoto }: PhotoStepProps) {
+export function PhotoStep({ photos, addPhoto, updatePhoto, invalid }: PhotoStepProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-sm font-medium">Photos</div>
-          <div className="text-xs text-muted-foreground">
-            Add at least one image URL for the spot gallery.
-          </div>
+          <div className="text-sm font-medium">Photos<span aria-hidden="true"> *</span></div>
         </div>
         <Button type="button" variant="secondary" onClick={addPhoto}>
           Add photo
@@ -25,6 +23,7 @@ export function PhotoStep({ photos, addPhoto, updatePhoto }: PhotoStepProps) {
         {photos.map((photo, index) => (
           <Input
             key={index}
+            aria-invalid={invalid}
             aria-label={`Photo URL ${index + 1}`}
             value={photo}
             onChange={(event) => updatePhoto(index, event.target.value)}

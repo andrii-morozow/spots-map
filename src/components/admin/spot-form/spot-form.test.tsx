@@ -6,10 +6,10 @@ import { SpotForm } from "./spot-form";
 async function fillDetails(user: ReturnType<typeof userEvent.setup>) {
   screen.getByRole("combobox", { name: "Type" }).focus();
   await user.keyboard("{ArrowDown}{Enter}");
-  await user.type(screen.getByLabelText("Name"), "North Point Skatepark");
-  await user.type(screen.getByLabelText("City"), "Barcelona");
-  await user.type(screen.getByLabelText("Latitude"), "41.3851");
-  await user.type(screen.getByLabelText("Longitude"), "2.1734");
+  await user.type(screen.getByRole("textbox", { name: "Name" }), "North Point Skatepark");
+  await user.type(screen.getByRole("textbox", { name: "City" }), "Barcelona");
+  await user.type(screen.getByRole("textbox", { name: "Latitude" }), "41.3851");
+  await user.type(screen.getByRole("textbox", { name: "Longitude" }), "2.1734");
 }
 
 async function rate(
@@ -28,16 +28,19 @@ describe("SpotForm", () => {
   it("enables Next when returning to valid details before completing ratings", async () => {
     const user = userEvent.setup();
     render(<SpotForm />);
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
-    expect(screen.getByRole("status")).toHaveTextContent("Enter a name.");
-    expect(screen.getByRole("status")).toHaveTextContent("Choose a type.");
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute("aria-invalid", "false");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("combobox", { name: "Type" })).toHaveAttribute("aria-invalid", "true");
     await fillDetails(user);
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Next" }));
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Back" }));
-    expect(screen.getByLabelText("Name")).toHaveValue("North Point Skatepark");
-    expect(screen.getByLabelText("City")).toHaveValue("Barcelona");
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("North Point Skatepark");
+    expect(screen.getByRole("textbox", { name: "City" })).toHaveValue("Barcelona");
     expect(screen.getByRole("combobox", { name: "Type" })).toHaveTextContent(
       "rail",
     );
@@ -48,11 +51,36 @@ describe("SpotForm", () => {
     ).toBeInTheDocument();
   });
 
+  it("displays six decimals without changing entered coordinate precision", async () => {
+    const user = userEvent.setup();
+    render(<SpotForm />);
+    const latitude = screen.getByRole("textbox", { name: "Latitude" });
+    const longitude = screen.getByRole("textbox", { name: "Longitude" });
+    await user.type(latitude, "88.23432423");
+    expect(latitude).toHaveValue("88.23432423");
+    await user.tab();
+    expect(latitude).toHaveValue("88.234324");
+    await user.click(latitude);
+    expect(latitude).toHaveValue("88.23432423");
+    await user.type(longitude, "0");
+    await user.tab();
+    expect(longitude).toHaveValue("0.000000");
+    await user.clear(latitude);
+    await user.type(latitude, "90.00000001");
+    await user.tab();
+    expect(latitude).toHaveValue("90.00000001");
+    await user.clear(longitude);
+    await user.tab();
+    expect(longitude).toHaveValue("");
+  });
+
   it("requires details, all four ratings, and a photo before submitting", async () => {
     const user = userEvent.setup();
     render(<SpotForm />);
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await fillDetails(user);
+    await user.clear(screen.getByRole("textbox", { name: "Latitude" }));
+    await user.type(screen.getByRole("textbox", { name: "Latitude" }), "41.38512345");
     await user.click(screen.getByRole("button", { name: "Next" }));
 
     expect(screen.queryByLabelText("Status")).not.toBeInTheDocument();
@@ -66,18 +94,16 @@ describe("SpotForm", () => {
     await rate(user, "Difficulty", "2");
     await rate(user, "Availability", "5");
     await rate(user, "Entrance", "3");
-    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Next" }));
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Select a rating for Landing.",
-    );
     expect(screen.queryByLabelText("Photo URL 1")).not.toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Landing" })).toHaveAttribute("aria-invalid", "true");
     await rate(user, "Landing", "4");
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
 
     await user.click(screen.getByRole("button", { name: "Back" }));
-    expect(screen.getByLabelText("Name")).toHaveValue("North Point Skatepark");
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("North Point Skatepark");
     expect(screen.getByRole("combobox", { name: "Type" })).toHaveTextContent(
       "rail",
     );
@@ -91,9 +117,12 @@ describe("SpotForm", () => {
     await user.click(screen.getByRole("button", { name: "Next" }));
 
     const submit = screen.getByRole("button", { name: "Submit" });
-    expect(submit).toBeDisabled();
+    expect(submit).toBeEnabled();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    await user.click(submit);
+    expect(screen.getByLabelText("Photo URL 1")).toHaveAttribute("aria-invalid", "true");
     await user.type(screen.getByLabelText("Photo URL 1"), "   ");
-    expect(submit).toBeDisabled();
+    expect(submit).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Add photo" }));
     await user.type(
       screen.getByLabelText("Photo URL 2"),
@@ -123,7 +152,7 @@ describe("SpotForm", () => {
           title: "North Point Skatepark",
           city: "Barcelona",
           spot_types: ["rail"],
-          latitude: 41.3851,
+          latitude: 41.38512345,
           longitude: 2.1734,
           difficulty: 2,
           availability: 5,
@@ -132,8 +161,8 @@ describe("SpotForm", () => {
           photos: ["https://example.com/spot.jpg"],
         }),
       );
-      expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
-      expect(screen.getByLabelText("Name")).toHaveValue("");
+      expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+      expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("");
     } finally {
       log.mockRestore();
     }
@@ -142,32 +171,36 @@ describe("SpotForm", () => {
   it("blocks missing city, invalid coordinates, and direct submission of an incomplete form", async () => {
     const user = userEvent.setup();
     const { container } = render(<SpotForm />);
+    expect(screen.getByRole("textbox", { name: "Latitude" })).toHaveAttribute("placeholder", "-90.0000 to 90.0000");
+    expect(screen.getByRole("textbox", { name: "Longitude" })).toHaveAttribute("placeholder", "-180.0000 to 180.0000");
     await fillDetails(user);
     const next = screen.getByRole("button", { name: "Next" });
-    await user.clear(screen.getByLabelText("City"));
-    expect(next).toBeDisabled();
+    await user.clear(screen.getByRole("textbox", { name: "City" }));
+    expect(next).toBeEnabled();
     await user.click(next);
-    expect(screen.getByRole("status")).toBeInTheDocument();
-    expect(screen.getByLabelText("Name")).toBeInTheDocument();
-    await user.type(screen.getByLabelText("City"), "Barcelona");
+    expect(screen.getByRole("textbox", { name: "City" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
+    await user.type(screen.getByRole("textbox", { name: "City" }), "Barcelona");
     for (const value of ["abc", "91", "-91", "Infinity", " "]) {
-      await user.clear(screen.getByLabelText("Latitude"));
-      await user.type(screen.getByLabelText("Latitude"), value);
-      expect(next).toBeDisabled();
+      await user.clear(screen.getByRole("textbox", { name: "Latitude" }));
+      await user.type(screen.getByRole("textbox", { name: "Latitude" }), value);
+      expect(next).toBeEnabled();
       await user.click(next);
-      expect(screen.getByRole("status")).toBeInTheDocument();
-      expect(screen.getByLabelText("Name")).toBeInTheDocument();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(screen.getByRole("textbox", { name: "Latitude" })).toHaveAttribute("aria-invalid", "true");
+      expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
     }
-    await user.clear(screen.getByLabelText("Latitude"));
-    await user.type(screen.getByLabelText("Latitude"), "0");
-    await user.clear(screen.getByLabelText("Longitude"));
-    await user.type(screen.getByLabelText("Longitude"), "181");
-    expect(next).toBeDisabled();
+    await user.clear(screen.getByRole("textbox", { name: "Latitude" }));
+    await user.type(screen.getByRole("textbox", { name: "Latitude" }), "0");
+    await user.clear(screen.getByRole("textbox", { name: "Longitude" }));
+    await user.type(screen.getByRole("textbox", { name: "Longitude" }), "181");
+    expect(next).toBeEnabled();
     await user.click(next);
-    expect(screen.getByRole("status")).toBeInTheDocument();
-    expect(screen.getByLabelText("Name")).toBeInTheDocument();
-    await user.clear(screen.getByLabelText("Longitude"));
-    await user.type(screen.getByLabelText("Longitude"), "0");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Longitude" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
+    await user.clear(screen.getByRole("textbox", { name: "Longitude" }));
+    await user.type(screen.getByRole("textbox", { name: "Longitude" }), "0");
     expect(next).toBeEnabled();
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     try {

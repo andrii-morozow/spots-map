@@ -1,3 +1,4 @@
+import type { FormikErrors } from "formik";
 import { useId } from "react";
 import type { SpotFormValues, UpdateSpotField } from "../spot-form.types";
 import styles from "./rate-step.module.css";
@@ -13,16 +14,17 @@ const fields = [
 type RateStepProps = {
   formData: SpotFormValues;
   updateField: UpdateSpotField;
+  errors: FormikErrors<SpotFormValues>;
 };
 
-export function RateStep({ formData, updateField }: RateStepProps) {
+export function RateStep({ formData, updateField, errors }: RateStepProps) {
   const id = useId();
 
   return (
     <div className={styles.ratings}>
       {fields.map(({ key, label }) => (
-        <fieldset key={key} className={styles.field}>
-          <legend className={styles.legend}>{label}</legend>
+        <fieldset key={key} className={styles.field} aria-invalid={Boolean(errors[key])}>
+          <legend className={styles.legend}>{label}<span aria-hidden="true"> *</span></legend>
           <div className={styles.options}>
             {ratings.map((rating) => (
               <label key={rating} className={styles.option}>

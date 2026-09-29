@@ -29,3 +29,8 @@
 .ratingPanel {
   padding-top: clamp(24px, calc(100dvh - 756px), 144px);
 }
+
+.form [aria-invalid="true"] {
+  border-color: #4527a0;
+  --tw-ring-color: rgb(69 39 160 / 20%);
+}

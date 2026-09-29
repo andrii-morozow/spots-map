@@ -42,6 +42,7 @@ const initialValues: SpotFormValues = {
 
 export function SpotForm() {
   const [step, setStep] = useState<Step>(1);
+  const [showErrors, setShowErrors] = useState(false);
 
   const submitSpot = (
     values: SpotFormValues,
@@ -54,6 +55,7 @@ export function SpotForm() {
     try {
       saveSpot(values);
       helpers.resetForm();
+      setShowErrors(false);
       setStep(1);
     } finally {
       helpers.setSubmitting(false);
@@ -70,23 +72,18 @@ export function SpotForm() {
   });
   const formData = formik.values;
 
+  const photosValid = hasRequiredPhotos(formData);
   const errors =
     step === 1
       ? getDetailsErrors(formData)
       : step === 2
         ? getRatingErrors(formData)
-        : [];
+        : photosValid
+          ? []
+          : ["Add at least one photo."];
 
   const detailsValid = hasRequiredDetails(formData);
   const ratingsValid = hasRequiredRatings(formData);
-  const photosValid = hasRequiredPhotos(formData);
-  const canSubmit =
-    detailsValid &&
-    ratingsValid &&
-    photosValid &&
-    formik.isValid &&
-    !formik.isSubmitting;
-
   const updateField = <K extends keyof SpotFormValues>(
     key: K,
     value: SpotFormValues[K],
@@ -103,14 +100,17 @@ export function SpotForm() {
   };
 
   const handleNext = () => {
-    if (errors.length) {
+    setShowErrors(true);
+    if (step === 1 ? !detailsValid : !ratingsValid) {
       return;
     }
+    setShowErrors(false);
     setStep(step === 1 ? 2 : 3);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setShowErrors(true);
     if (!detailsValid) {
       setStep(1);
       return;
@@ -138,48 +138,51 @@ export function SpotForm() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="grid min-w-0 grid-cols-1 gap-6"
+          className={`${styles.form} grid min-w-0 grid-cols-1 gap-6`}
         >
           <div className={styles.step}>
             <div className="space-y-6">
               {step === 1 ? (
-                <DetailsStep formData={formData} updateField={updateField} />
+                <DetailsStep
+                  formData={formData}
+                  updateField={updateField}
+                  errors={showErrors ? formik.errors : {}}
+                />
               ) : step === 2 ? (
-                <RateStep formData={formData} updateField={updateField} />
+                <RateStep
+                  formData={formData}
+                  updateField={updateField}
+                  errors={showErrors ? formik.errors : {}}
+                />
               ) : (
                 <PhotoStep
                   photos={formData.photos}
+                  invalid={showErrors && !photosValid}
                   addPhoto={addPhoto}
                   updatePhoto={updatePhoto}
                 />
               )}
             </div>
             <div className="space-y-3">
-              {errors.length > 0 && (
-                <div
-                  id="step-errors"
-                  role="status"
-                  className="text-xs text-muted-foreground"
-                >
-                  {errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
-                </div>
-              )}
               <div className="flex items-center justify-start gap-3">
                 {step < 3 ? (
                   <Button
                     className="min-w-[117px]"
                     key="next"
                     type="button"
-                    disabled={errors.length > 0}
-                    aria-describedby={errors.length ? "step-errors" : undefined}
+                    aria-describedby={
+                      showErrors && errors.length ? "step-errors" : undefined
+                    }
                     onClick={handleNext}
                   >
                     Next
                   </Button>
                 ) : (
-                  <Button key="submit" type="submit" disabled={!canSubmit}>
+                  <Button
+                    key="submit"
+                    type="submit"
+                    disabled={formik.isSubmitting}
+                  >
                     Submit
                   </Button>
                 )}
@@ -188,6 +191,7 @@ export function SpotForm() {
                     type="button"
                     variant="ghost"
                     onClick={() => {
+                      setShowErrors(false);
                       setStep(step === 3 ? 2 : 1);
                     }}
                   >
