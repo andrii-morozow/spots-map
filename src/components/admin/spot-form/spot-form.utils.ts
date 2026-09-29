@@ -1,24 +1,12 @@
 import type { Spot } from "@/types/spot";
-import {
-  hasRequiredDetails,
-  hasRequiredRatings,
-  hasRequiredPhotos,
-} from "./spot-form.validation";
+import { spotFormSchema } from "./spot-form.validation";
 import type { SpotFormValues } from "./spot-form.types";
 
 export function toSpot(
   values: SpotFormValues,
   metadata: { id: string; timestamp: string },
 ): Spot {
-  if (
-    !hasRequiredDetails(values) ||
-    !hasRequiredRatings(values) ||
-    !hasRequiredPhotos(values)
-  ) {
-    throw new Error(
-      "Complete required details, all four ratings, and add at least one photo.",
-    );
-  }
+  const validated = spotFormSchema.validateSync(values, { abortEarly: false });
   return {
     id: metadata.id,
     title: values.title.trim(),
@@ -35,10 +23,10 @@ export function toSpot(
     country: values.country.trim() || null,
     sport_types: [...values.sportTypes],
     spot_types: [...values.spotTypes],
-    difficulty: values.difficulty,
-    availability: values.availability,
-    entrance: values.entrance,
-    landing: values.landing,
+    difficulty: validated.difficulty,
+    availability: validated.availability,
+    entrance: validated.entrance,
+    landing: validated.landing,
     status: values.status,
     created_by: values.createdBy.trim() || null,
     photos: values.photos.filter((photo) => photo.trim().length > 0),

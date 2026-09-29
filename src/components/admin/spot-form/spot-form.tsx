@@ -9,7 +9,8 @@ import { RateStep } from "./rate-step/rate-step";
 import { PhotoStep } from "./photo-step/photo-step";
 import type { SpotFormValues } from "./spot-form.types";
 import {
-  validateSpotForm,
+  getInitialErrors,
+  spotFormSchema,
   hasRequiredDetails,
   getDetailsErrors,
   getRatingErrors,
@@ -61,8 +62,8 @@ export function SpotForm() {
 
   const formik = useFormik<SpotFormValues>({
     initialValues,
-    initialErrors: validateSpotForm(initialValues),
-    validate: validateSpotForm,
+    initialErrors: getInitialErrors(initialValues),
+    validationSchema: spotFormSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: submitSpot,
