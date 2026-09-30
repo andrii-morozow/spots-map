@@ -38,6 +38,21 @@ const initialValues: SpotFormValues = {
   landing: null,
   status: "draft",
   createdBy: "",
+  ...(process.env.NODE_ENV === "development"
+    ? ({
+        title: "North Point Skatepark",
+        description: "A spacious skate spot with rails and smooth concrete.",
+        latitude: "41.3851",
+        longitude: "2.1734",
+        city: "Barcelona",
+        country: "Spain",
+        spotTypes: ["rail"],
+        difficulty: 2,
+        availability: 5,
+        entrance: 3,
+        landing: 4,
+      } satisfies Partial<SpotFormValues>)
+    : {}),
 };
 
 export function SpotForm() {
