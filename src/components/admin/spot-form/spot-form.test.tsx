@@ -6,7 +6,10 @@ import { SpotForm } from "./spot-form";
 async function fillDetails(user: ReturnType<typeof userEvent.setup>) {
   screen.getByRole("combobox", { name: "Type" }).focus();
   await user.keyboard("{ArrowDown}{Enter}");
-  await user.type(screen.getByRole("textbox", { name: "Name" }), "North Point Skatepark");
+  await user.type(
+    screen.getByRole("textbox", { name: "Name" }),
+    "North Point Skatepark",
+  );
   await user.type(screen.getByRole("textbox", { name: "City" }), "Barcelona");
   await user.type(screen.getByRole("textbox", { name: "Latitude" }), "41.3851");
   await user.type(screen.getByRole("textbox", { name: "Longitude" }), "2.1734");
@@ -30,17 +33,30 @@ describe("SpotForm", () => {
     render(<SpotForm />);
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute("aria-invalid", "false");
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute(
+      "aria-invalid",
+      "false",
+    );
     await user.click(screen.getByRole("button", { name: "Next" }));
-    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByRole("combobox", { name: "Type" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(screen.getByRole("combobox", { name: "Type" })).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     await fillDetails(user);
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Back" }));
-    expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("North Point Skatepark");
-    expect(screen.getByRole("textbox", { name: "City" })).toHaveValue("Barcelona");
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue(
+      "North Point Skatepark",
+    );
+    expect(screen.getByRole("textbox", { name: "City" })).toHaveValue(
+      "Barcelona",
+    );
     expect(screen.getByRole("combobox", { name: "Type" })).toHaveTextContent(
       "rail",
     );
@@ -80,7 +96,10 @@ describe("SpotForm", () => {
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await fillDetails(user);
     await user.clear(screen.getByRole("textbox", { name: "Latitude" }));
-    await user.type(screen.getByRole("textbox", { name: "Latitude" }), "41.38512345");
+    await user.type(
+      screen.getByRole("textbox", { name: "Latitude" }),
+      "41.38512345",
+    );
     await user.click(screen.getByRole("button", { name: "Next" }));
 
     expect(screen.queryByLabelText("Status")).not.toBeInTheDocument();
@@ -97,13 +116,18 @@ describe("SpotForm", () => {
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.queryByLabelText("Photo URL 1")).not.toBeInTheDocument();
-    expect(screen.getByRole("group", { name: "Landing" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("group", { name: "Landing" })).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     await rate(user, "Landing", "4");
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
 
     await user.click(screen.getByRole("button", { name: "Back" }));
-    expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("North Point Skatepark");
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue(
+      "North Point Skatepark",
+    );
     expect(screen.getByRole("combobox", { name: "Type" })).toHaveTextContent(
       "rail",
     );
@@ -116,36 +140,25 @@ describe("SpotForm", () => {
     ).toBeChecked();
     await user.click(screen.getByRole("button", { name: "Next" }));
 
-    const submit = screen.getByRole("button", { name: "Submit" });
+    const submit = screen.getByRole("button", { name: "Submit spot" });
     expect(submit).toBeEnabled();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     await user.click(submit);
-    expect(screen.getByLabelText("Photo URL 1")).toHaveAttribute("aria-invalid", "true");
-    await user.type(screen.getByLabelText("Photo URL 1"), "   ");
-    expect(submit).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Add photo" }));
-    await user.type(
-      screen.getByLabelText("Photo URL 2"),
-      "https://example.com/spot.jpg",
+    expect(screen.getByLabelText("Choose photos")).toHaveAttribute(
+      "aria-invalid",
+      "true",
     );
-    expect(submit).toBeEnabled();
-
-    await user.click(screen.getByRole("button", { name: "Back" }));
-    expect(
-      within(screen.getByRole("group", { name: "Landing" })).getByRole(
-        "radio",
-        { name: "4" },
-      ),
-    ).toBeChecked();
-    await user.click(screen.getByRole("button", { name: "Next" }));
-    expect(screen.getByLabelText("Photo URL 2")).toHaveValue(
-      "https://example.com/spot.jpg",
-    );
-    expect(screen.getByRole("button", { name: "Submit" })).toBeEnabled();
+    const photo = new File(["photo"], "spot.png", { type: "image/png" });
+    await user.upload(screen.getByLabelText("Choose photos"), [photo, photo]);
+    expect(await screen.findByAltText("Spot photo 2")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Remove photo 1" }));
+    expect(screen.queryByAltText("Spot photo 2")).not.toBeInTheDocument();
+    expect(screen.getByAltText("Spot photo 1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Submit spot" })).toBeEnabled();
 
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     try {
-      await user.click(screen.getByRole("button", { name: "Submit" }));
+      await user.click(screen.getByRole("button", { name: "Submit spot" }));
       expect(log).toHaveBeenCalledWith(
         "spot payload",
         expect.objectContaining({
@@ -158,7 +171,7 @@ describe("SpotForm", () => {
           availability: 5,
           entrance: 3,
           landing: 4,
-          photos: ["https://example.com/spot.jpg"],
+          photos: [expect.stringMatching(/^data:image\/png;base64,/)],
         }),
       );
       expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
@@ -171,14 +184,23 @@ describe("SpotForm", () => {
   it("blocks missing city, invalid coordinates, and direct submission of an incomplete form", async () => {
     const user = userEvent.setup();
     const { container } = render(<SpotForm />);
-    expect(screen.getByRole("textbox", { name: "Latitude" })).toHaveAttribute("placeholder", "-90.0000 to 90.0000");
-    expect(screen.getByRole("textbox", { name: "Longitude" })).toHaveAttribute("placeholder", "-180.0000 to 180.0000");
+    expect(screen.getByRole("textbox", { name: "Latitude" })).toHaveAttribute(
+      "placeholder",
+      "-90.0000 to 90.0000",
+    );
+    expect(screen.getByRole("textbox", { name: "Longitude" })).toHaveAttribute(
+      "placeholder",
+      "-180.0000 to 180.0000",
+    );
     await fillDetails(user);
     const next = screen.getByRole("button", { name: "Next" });
     await user.clear(screen.getByRole("textbox", { name: "City" }));
     expect(next).toBeEnabled();
     await user.click(next);
-    expect(screen.getByRole("textbox", { name: "City" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("textbox", { name: "City" })).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
     await user.type(screen.getByRole("textbox", { name: "City" }), "Barcelona");
     for (const value of ["abc", "91", "-91", "Infinity", " "]) {
@@ -187,7 +209,10 @@ describe("SpotForm", () => {
       expect(next).toBeEnabled();
       await user.click(next);
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
-      expect(screen.getByRole("textbox", { name: "Latitude" })).toHaveAttribute("aria-invalid", "true");
+      expect(screen.getByRole("textbox", { name: "Latitude" })).toHaveAttribute(
+        "aria-invalid",
+        "true",
+      );
       expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
     }
     await user.clear(screen.getByRole("textbox", { name: "Latitude" }));
@@ -197,7 +222,10 @@ describe("SpotForm", () => {
     expect(next).toBeEnabled();
     await user.click(next);
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: "Longitude" })).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("textbox", { name: "Longitude" })).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
     await user.clear(screen.getByRole("textbox", { name: "Longitude" }));
     await user.type(screen.getByRole("textbox", { name: "Longitude" }), "0");

@@ -24,7 +24,7 @@ type Step = 1 | 2 | 3;
 const initialValues: SpotFormValues = {
   title: "",
   description: "",
-  photos: [""],
+  photos: [],
   latitude: "",
   longitude: "",
   address: "",
@@ -106,12 +106,18 @@ export function SpotForm() {
     void formik.setFieldValue(key, value);
   };
 
-  const updatePhoto = (index: number, value: string) => {
-    void formik.setFieldValue(`photos[${index}]`, value);
+  const addPhotos = (photos: string[]) => {
+    void formik.setValues((values) => ({
+      ...values,
+      photos: [...values.photos, ...photos],
+    }));
   };
 
-  const addPhoto = () => {
-    void formik.setFieldValue("photos", [...formik.values.photos, ""]);
+  const removePhoto = (index: number) => {
+    void formik.setValues((values) => ({
+      ...values,
+      photos: values.photos.filter((_, photoIndex) => photoIndex !== index),
+    }));
   };
 
   const handleNext = () => {
@@ -142,11 +148,11 @@ export function SpotForm() {
   return (
     <main className={`${styles.panel} bg-background text-foreground`}>
       <div className={`${styles.content} flex w-full flex-col text-left`}>
-        <header className="flex flex-col gap-4 py-0 px-1">
+        <header className="flex flex-col gap-4 py-0">
           <h1 className="text-[32px] leading-[30px] font-semibold">Add spot</h1>
           <p className="text-base leading-5 text-neutral-500">Step {step}/3</p>
         </header>
-        <div className={`${styles.scrollArea} py-0 px-1`} key={step}>
+        <div className={`${styles.scrollArea} py-0`} key={step}>
           <form
             onSubmit={handleSubmit}
             noValidate
@@ -170,8 +176,8 @@ export function SpotForm() {
                   <PhotoStep
                     photos={formData.photos}
                     invalid={showErrors && !photosValid}
-                    addPhoto={addPhoto}
-                    updatePhoto={updatePhoto}
+                    addPhotos={addPhotos}
+                    removePhoto={removePhoto}
                   />
                 )}
               </div>
@@ -192,19 +198,20 @@ export function SpotForm() {
                   ) : (
                     <Button
                       key="submit"
+                      className="w-[174px]"
                       type="submit"
                       disabled={formik.isSubmitting}
                     >
-                      Submit
+                      Submit spot
                     </Button>
                   )}
-                  {step > 1 && (
+                  {step === 2 && (
                     <Button
                       type="button"
                       variant="ghost"
                       onClick={() => {
                         setShowErrors(false);
-                        setStep(step === 3 ? 2 : 1);
+                        setStep(1);
                       }}
                     >
                       Back
