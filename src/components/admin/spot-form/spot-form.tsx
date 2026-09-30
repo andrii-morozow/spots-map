@@ -205,13 +205,13 @@ export function SpotForm() {
                       Submit spot
                     </Button>
                   )}
-                  {step === 2 && (
+                  {step > 1 && (
                     <Button
                       type="button"
                       variant="ghost"
                       onClick={() => {
                         setShowErrors(false);
-                        setStep(1);
+                        setStep(step === 3 ? 2 : 1);
                       }}
                     >
                       Back
