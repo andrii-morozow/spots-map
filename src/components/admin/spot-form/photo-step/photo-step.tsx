@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useRef, useState } from "react";
 import styles from "./photo-step.module.css";
 
@@ -128,9 +129,7 @@ export function PhotoStep({
               className={styles.preview}
               key={`${index}-${photo.slice(-32)}`}
             >
-              {/* Local data URLs do not need Next.js image optimization. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={photo} alt={`Spot photo ${index + 1}`} />
+              <Image src={photo} alt={`Spot photo ${index + 1}`} fill />
               <button
                 type="button"
                 className={styles.remove}
