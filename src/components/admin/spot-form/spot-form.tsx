@@ -148,11 +148,11 @@ export function SpotForm() {
   return (
     <main className={`${styles.panel} bg-background text-foreground`}>
       <div className={`${styles.content} flex w-full flex-col text-left`}>
-        <header className="flex flex-col gap-4 py-0">
+        <header className="flex flex-col gap-4 py-0 px-1">
           <h1 className="text-[32px] leading-[30px] font-semibold">Add spot</h1>
           <p className="text-base leading-5 text-neutral-500">Step {step}/3</p>
         </header>
-        <div className={`${styles.scrollArea} py-0`} key={step}>
+        <div className={`${styles.scrollArea} py-0 px-1`} key={step}>
           <form
             onSubmit={handleSubmit}
             noValidate

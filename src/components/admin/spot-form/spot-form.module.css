@@ -37,13 +37,23 @@
   }
 }
 
-.form :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-invalid]) {
+.form
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"],
+    [data-invalid]
+  ) {
   border-radius: 12px;
 }
 
-.form :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"]):is(:focus-visible, [aria-invalid="true"]),
+.form
+  :is(
+    [data-slot="input"],
+    [data-slot="textarea"],
+    [data-slot="select-trigger"]
+  ):is(:focus-visible, [aria-invalid="true"]),
 .form [data-invalid]:is([data-invalid="true"], :has(input:focus-visible)) {
-  border-color: var(--ring);
+  border: 2px solid var(--ring);
   outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 50%, transparent);
 }

@@ -31,12 +31,6 @@
   background: #202020;
 }
 
-.dropzone:focus-visible,
-.dropzone[data-invalid="true"] {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
 .dropzone:disabled {
   cursor: progress;
 }

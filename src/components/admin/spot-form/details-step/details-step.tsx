@@ -28,15 +28,21 @@ function formatCoordinate(value: string, limit: number) {
   return number.toFixed(6);
 }
 
-export function DetailsStep({ formData, updateField, errors }: DetailsStepProps) {
-  const [editingCoordinate, setEditingCoordinate] = useState<"latitude" | "longitude" | null>(null);
+export function DetailsStep({
+  formData,
+  updateField,
+  errors,
+}: DetailsStepProps) {
+  const [editingCoordinate, setEditingCoordinate] = useState<
+    "latitude" | "longitude" | null
+  >(null);
 
   return (
     <div className={styles.fields}>
       <Field required label="Name" htmlFor="title">
         <Input
           id="title"
-            aria-invalid={Boolean(errors.title)}
+          aria-invalid={Boolean(errors.title)}
           required
           value={formData.title}
           onChange={(event) => updateField("title", event.target.value)}
@@ -68,7 +74,7 @@ export function DetailsStep({ formData, updateField, errors }: DetailsStepProps)
           </SelectContent>
         </Select>
       </Field>
-      <Field label="Description" htmlFor="description">
+      {/* <Field label="Description" htmlFor="description">
         <Textarea
           id="description"
           value={formData.description}
@@ -76,7 +82,7 @@ export function DetailsStep({ formData, updateField, errors }: DetailsStepProps)
           placeholder="Short note about the place, surface, access, and any moderation context."
           rows={5}
         />
-      </Field>
+      </Field> */}
       <Field label="Address" htmlFor="address">
         <Input
           id="address"
@@ -111,7 +117,11 @@ export function DetailsStep({ formData, updateField, errors }: DetailsStepProps)
             id="latitude"
             required
             inputMode="decimal"
-            value={editingCoordinate === "latitude" ? formData.latitude : formatCoordinate(formData.latitude, 90)}
+            value={
+              editingCoordinate === "latitude"
+                ? formData.latitude
+                : formatCoordinate(formData.latitude, 90)
+            }
             onFocus={() => setEditingCoordinate("latitude")}
             onBlur={() => setEditingCoordinate(null)}
             onChange={(event) => updateField("latitude", event.target.value)}
@@ -124,7 +134,11 @@ export function DetailsStep({ formData, updateField, errors }: DetailsStepProps)
             id="longitude"
             required
             inputMode="decimal"
-            value={editingCoordinate === "longitude" ? formData.longitude : formatCoordinate(formData.longitude, 180)}
+            value={
+              editingCoordinate === "longitude"
+                ? formData.longitude
+                : formatCoordinate(formData.longitude, 180)
+            }
             onFocus={() => setEditingCoordinate("longitude")}
             onBlur={() => setEditingCoordinate(null)}
             onChange={(event) => updateField("longitude", event.target.value)}
