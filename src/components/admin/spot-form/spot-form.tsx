@@ -33,8 +33,8 @@ const initialValues: SpotFormValues = {
   sportTypes: [],
   spotTypes: [],
   difficulty: null,
-  availability: null,
-  entrance: null,
+  access: null,
+  runup: null,
   landing: null,
   status: "draft",
   createdBy: "",
@@ -48,8 +48,8 @@ const initialValues: SpotFormValues = {
         country: "Spain",
         spotTypes: ["rail"],
         difficulty: 2,
-        availability: 5,
-        entrance: 3,
+        access: 5,
+        runup: 3,
         landing: 4,
       } satisfies Partial<SpotFormValues>)
     : {}),
@@ -146,7 +146,10 @@ export function SpotForm() {
   };
 
   return (
-    <main className={`${styles.panel} bg-background text-foreground`} data-step={step}>
+    <main
+      className={`${styles.panel} bg-background text-foreground`}
+      data-step={step}
+    >
       <div className={`${styles.content} flex w-full flex-col text-left`}>
         <header className="flex flex-col gap-4 py-0 px-1">
           <h1 className="text-[32px] leading-[30px] font-semibold">Add spot</h1>

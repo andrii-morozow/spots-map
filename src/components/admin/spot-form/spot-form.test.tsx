@@ -103,7 +103,7 @@ describe("SpotForm", () => {
     await user.click(screen.getByRole("button", { name: "Next" }));
 
     expect(screen.queryByLabelText("Status")).not.toBeInTheDocument();
-    for (const label of ["Difficulty", "Availability", "Entrance", "Landing"]) {
+    for (const label of ["Difficulty", "Access", "Run-up", "Landing"]) {
       const group = screen.getByRole("group", { name: label });
       expect(within(group).getAllByRole("radio")).toHaveLength(5);
       expect(
@@ -125,8 +125,8 @@ describe("SpotForm", () => {
     expect(
       within(difficulty).queryByText("Very easy — suitable for beginners."),
     ).not.toBeInTheDocument();
-    await rate(user, "Availability", "5");
-    await rate(user, "Entrance", "3");
+    await rate(user, "Access", "5");
+    await rate(user, "Run-up", "3");
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.queryByLabelText("Photo URL 1")).not.toBeInTheDocument();
@@ -147,10 +147,9 @@ describe("SpotForm", () => {
     );
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(
-      within(screen.getByRole("group", { name: "Availability" })).getByRole(
-        "radio",
-        { name: "5" },
-      ),
+      within(screen.getByRole("group", { name: "Access" })).getByRole("radio", {
+        name: "5",
+      }),
     ).toBeChecked();
     await user.click(screen.getByRole("button", { name: "Next" }));
 
@@ -182,8 +181,8 @@ describe("SpotForm", () => {
           latitude: 41.38512345,
           longitude: 2.1734,
           difficulty: 2,
-          availability: 5,
-          entrance: 3,
+          access: 5,
+          runup: 3,
           landing: 4,
           photos: [expect.stringMatching(/^data:image\/png;base64,/)],
         }),

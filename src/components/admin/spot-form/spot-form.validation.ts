@@ -45,8 +45,8 @@ export const detailsSchema = object({
 
 export const ratingsSchema = object({
   difficulty: ratingSchema("Difficulty"),
-  availability: ratingSchema("Availability"),
-  entrance: ratingSchema("Entrance"),
+  Access: ratingSchema("Access"),
+  runup: ratingSchema("Run-up"),
   landing: ratingSchema("Landing"),
 });
 
@@ -80,9 +80,15 @@ export function getInitialErrors(values: SpotFormValues) {
 
 export function getDetailsErrors(values: SpotFormValues): string[] {
   const errors = getValidationError(detailsSchema, values)?.inner ?? [];
-  return [...new Set(errors
-    .filter((error) => error.path !== "latitude" && error.path !== "longitude")
-    .map((error) => error.message))];
+  return [
+    ...new Set(
+      errors
+        .filter(
+          (error) => error.path !== "latitude" && error.path !== "longitude",
+        )
+        .map((error) => error.message),
+    ),
+  ];
 }
 
 export function getRatingErrors(values: SpotFormValues): string[] {

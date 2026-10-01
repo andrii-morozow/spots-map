@@ -12,8 +12,8 @@ export const fields = [
     ],
   },
   {
-    key: "availability",
-    label: "Availability",
+    key: "access",
+    label: "Access",
     descriptions: [
       "Rarely accessible — very limited opportunities.",
       "Occasionally accessible — limited times.",
@@ -23,8 +23,8 @@ export const fields = [
     ],
   },
   {
-    key: "entrance",
-    label: "Entrance",
+    key: "runup",
+    label: "Run-up",
     descriptions: [
       "Very poor run-up — little room and major obstacles.",
       "Poor run-up — limited room or uneven ground.",

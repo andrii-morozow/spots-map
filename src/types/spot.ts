@@ -18,8 +18,8 @@ export type Spot = {
   sport_types: SportType[];
   spot_types: SpotType[];
   difficulty: Rating;
-  availability: Rating;
-  entrance: Rating;
+  access: Rating;
+  runup: Rating;
   landing: Rating;
   status: "draft" | "published" | "archived";
   created_by: string | null;

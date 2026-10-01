@@ -2,8 +2,8 @@ import type { Spot } from "@/types/spot";
 
 export type SpotFormValues = Pick<Spot, "title" | "photos" | "status"> & {
   difficulty: Spot["difficulty"] | null;
-  availability: Spot["availability"] | null;
-  entrance: Spot["entrance"] | null;
+  access: Spot["access"] | null;
+  runup: Spot["runup"] | null;
   landing: Spot["landing"] | null;
   description: string;
   latitude: string;
