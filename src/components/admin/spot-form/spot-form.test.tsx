@@ -110,7 +110,21 @@ describe("SpotForm", () => {
         within(group).queryByRole("radio", { checked: true }),
       ).not.toBeInTheDocument();
     }
+    const difficulty = screen.getByRole("group", { name: "Difficulty" });
+    expect(
+      within(difficulty).getByText("Select a number to see what it means."),
+    ).toBeInTheDocument();
+    await rate(user, "Difficulty", "1");
+    expect(
+      within(difficulty).getByRole("radio", { name: "1" }),
+    ).toHaveAccessibleDescription("Very easy — suitable for beginners.");
     await rate(user, "Difficulty", "2");
+    expect(
+      within(difficulty).getByRole("radio", { name: "2" }),
+    ).toHaveAccessibleDescription("Easy — basic skills needed.");
+    expect(
+      within(difficulty).queryByText("Very easy — suitable for beginners."),
+    ).not.toBeInTheDocument();
     await rate(user, "Availability", "5");
     await rate(user, "Entrance", "3");
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();

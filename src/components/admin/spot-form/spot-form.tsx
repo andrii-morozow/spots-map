@@ -146,7 +146,7 @@ export function SpotForm() {
   };
 
   return (
-    <main className={`${styles.panel} bg-background text-foreground`}>
+    <main className={`${styles.panel} bg-background text-foreground`} data-step={step}>
       <div className={`${styles.content} flex w-full flex-col text-left`}>
         <header className="flex flex-col gap-4 py-0 px-1">
           <h1 className="text-[32px] leading-[30px] font-semibold">Add spot</h1>
