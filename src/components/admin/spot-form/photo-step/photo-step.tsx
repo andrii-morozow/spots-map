@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import styles from "./photo-step.module.css";
+import { AddPhotoButton } from "./add-photo-button/add-photo-button";
 
 type PhotoStepProps = {
   photos: string[];
@@ -27,7 +28,6 @@ export function PhotoStep({
   const input = useRef<HTMLInputElement>(null);
   const reading = useRef(false);
   const [busy, setBusy] = useState(false);
-  const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
 
   async function selectPhotos(files: File[]) {
@@ -70,58 +70,14 @@ export function PhotoStep({
           event.target.value = "";
         }}
       />
-      <button
-        type="button"
-        className={styles.dropzone}
-        data-dragging={dragging}
-        aria-label="Add photos"
-        data-invalid={Boolean(message)}
-        aria-describedby={message ? "photo-error" : "photo-hint"}
-        aria-busy={busy}
-        disabled={busy}
-        onClick={() => input.current?.click()}
-        onDragOver={(event) => {
-          event.preventDefault();
-          event.dataTransfer.dropEffect = "copy";
-          setDragging(true);
-        }}
-        onDragLeave={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null))
-            setDragging(false);
-        }}
-        onDrop={(event) => {
-          event.preventDefault();
-          setDragging(false);
-          void selectPhotos(Array.from(event.dataTransfer.files));
-        }}
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          aria-hidden="true"
-        >
-          <path d="m5 16-2-11 14-2 1 5" strokeLinejoin="round" />
-          <rect x="6" y="7" width="15" height="13" rx="2" />
-          <circle cx="11" cy="11" r="1" />
-          <path d="m7 18 4-4 3 3 3-5 4 5" strokeLinejoin="round" />
-        </svg>
-        <span id="photo-hint">
-          {busy ? (
-            "Adding images…"
-          ) : (
-            <>
-              <span className={styles.link}>Click to add</span> or drag and drop
-              your images.
-            </>
-          )}
-          <br />
-          We support png, jpeg files.
-        </span>
-      </button>
+
+      <AddPhotoButton
+        busy={busy}
+        message={message}
+        input={input}
+        selectPhotos={selectPhotos}
+      />
+
       {photos.length > 0 && (
         <div className={styles.previews}>
           {photos.map((photo, index) => (
