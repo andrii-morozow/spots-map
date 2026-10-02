@@ -45,7 +45,7 @@ export const detailsSchema = object({
 
 export const ratingsSchema = object({
   difficulty: ratingSchema("Difficulty"),
-  Access: ratingSchema("Access"),
+  access: ratingSchema("Access"),
   runup: ratingSchema("Run-up"),
   landing: ratingSchema("Landing"),
 });

@@ -17,6 +17,10 @@ const validDetails = {
 const validRatings = { difficulty: 1, access: 2, runup: 3, landing: 5 };
 
 describe("spot form schemas", () => {
+  it("accepts all four selected ratings using the form field keys", () => {
+    expect(ratingsSchema.isValidSync(validRatings)).toBe(true);
+  });
+
   it.each([null, 0, 6, 1.5, "3"])("rejects invalid rating %s", (rating) => {
     for (const field of Object.keys(validRatings)) {
       expect(
