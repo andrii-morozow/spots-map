@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { FormikErrors } from "formik";
 import styles from "./details-step.module.css";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -74,15 +73,7 @@ export function DetailsStep({
           </SelectContent>
         </Select>
       </Field>
-      {/* <Field label="Description" htmlFor="description">
-        <Textarea
-          id="description"
-          value={formData.description}
-          onChange={(event) => updateField("description", event.target.value)}
-          placeholder="Short note about the place, surface, access, and any moderation context."
-          rows={5}
-        />
-      </Field> */}
+
       <Field label="Address" htmlFor="address">
         <Input
           id="address"
