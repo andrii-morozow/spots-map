@@ -5,7 +5,6 @@ const nextConfig = {
   },
   trailingSlash: true,
   distDir: "dist",
-  output: "export",
 };
 
 module.exports = nextConfig;
