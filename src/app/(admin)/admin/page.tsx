@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 export default async function AdminPage() {
   const { userId } = await auth.protect();
 
+  // TODO implement admin restriction page. 503
   if (userId !== process.env.ADMIN_USER_ID) {
     notFound();
   }
