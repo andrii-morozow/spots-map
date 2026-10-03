@@ -30,6 +30,9 @@ describe("public map authentication controls", () => {
     render(<PublicMap />);
 
     expect(
+      screen.queryByRole("link", { name: "Admin" }),
+    ).not.toBeInTheDocument();
+    expect(
       screen.queryByRole("button", { name: "Account menu" }),
     ).not.toBeInTheDocument();
     expect(screen.getByTestId("sign-in-modal-trigger")).toBeInTheDocument();
@@ -49,6 +52,10 @@ describe("public map authentication controls", () => {
     session.isSignedIn = true;
     rerender(<PublicMap />);
 
+    expect(screen.getByRole("link", { name: "Admin" })).toHaveAttribute(
+      "href",
+      "/admin",
+    );
     expect(screen.getByRole("button", { name: "Account menu" })).toBeEnabled();
     expect(
       screen.queryByTestId("sign-in-modal-trigger"),
@@ -72,6 +79,9 @@ describe("public map authentication controls", () => {
     session.isLoaded = false;
     render(<PublicMap />);
 
+    expect(
+      screen.queryByRole("link", { name: "Admin" }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Account menu" }),
     ).not.toBeInTheDocument();
