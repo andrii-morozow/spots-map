@@ -11,26 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const session = await auth();
   const adminUserId = process.env.ADMIN_USER_ID;
-
-  if (!session.isAuthenticated || session.userId !== adminUserId) {
-    console.warn("[admin-access] Access check failed", {
-      reason: !session.isAuthenticated
-        ? "unauthenticated"
-        : !adminUserId
-          ? "admin-not-configured"
-          : "admin-id-mismatch",
-      sessionStatus: session.sessionStatus,
-      adminIdConfigured: Boolean(adminUserId),
-      adminIdHasWhitespace: Boolean(
-        adminUserId && adminUserId !== adminUserId.trim(),
-      ),
-      matchesAfterTrimming: Boolean(
-        session.userId && adminUserId && session.userId === adminUserId.trim(),
-      ),
-    });
-  }
 
   const { userId } = await auth.protect();
 
