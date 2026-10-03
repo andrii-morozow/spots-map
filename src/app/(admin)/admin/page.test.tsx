@@ -1,20 +1,21 @@
+import type { ReactNode } from "react";
+import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AdminPage from "./page";
 
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(),
   protect: vi.fn(),
-  notFound: vi.fn(() => {
-    throw new Error("NOT_FOUND");
-  }),
 }));
 
 vi.mock("@clerk/nextjs/server", () => ({
   auth: Object.assign(mocks.auth, { protect: mocks.protect }),
 }));
-vi.mock("next/navigation", () => ({ notFound: mocks.notFound }));
+vi.mock("@clerk/nextjs", () => ({
+  SignOutButton: ({ children }: { children: ReactNode }) => children,
+}));
 vi.mock("@/components/admin/spot-form/spot-form", () => ({
-  SpotForm: () => null,
+  SpotForm: () => <div>Protected spot form</div>,
 }));
 vi.mock("@/components/map/map", () => ({ Map: () => null }));
 vi.mock("@/components/auth/account-button", () => ({
@@ -40,9 +41,9 @@ describe("admin access diagnostics", () => {
   });
 
   it("allows the matching admin without logging a failure", async () => {
-    await expect(AdminPage()).resolves.toBeDefined();
+    render(await AdminPage());
+    expect(screen.getByText("Protected spot form")).toBeInTheDocument();
     expect(mocks.protect).toHaveBeenCalledOnce();
-    expect(mocks.notFound).not.toHaveBeenCalled();
     expect(console.warn).not.toHaveBeenCalled();
   });
 
@@ -67,7 +68,15 @@ describe("admin access diagnostics", () => {
       sessionStatus: "active",
     });
     mocks.protect.mockResolvedValue({ userId: "user_other" });
-    await expect(AdminPage()).rejects.toThrow("NOT_FOUND");
+    render(await AdminPage());
+    expect(
+      screen.getByRole("heading", { name: "Admin access required" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Protected spot form")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to map" })).toHaveAttribute(
+      "href",
+      "/map",
+    );
     expect(console.warn).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
@@ -82,7 +91,15 @@ describe("admin access diagnostics", () => {
 
   it("identifies whitespace without changing the access policy", async () => {
     vi.stubEnv("ADMIN_USER_ID", "user_admin\n");
-    await expect(AdminPage()).rejects.toThrow("NOT_FOUND");
+    render(await AdminPage());
+    expect(
+      screen.getByRole("heading", { name: "Admin access required" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Protected spot form")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to map" })).toHaveAttribute(
+      "href",
+      "/map",
+    );
     expect(console.warn).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
@@ -94,7 +111,15 @@ describe("admin access diagnostics", () => {
 
   it("identifies missing configuration and still denies access", async () => {
     vi.stubEnv("ADMIN_USER_ID", undefined);
-    await expect(AdminPage()).rejects.toThrow("NOT_FOUND");
+    render(await AdminPage());
+    expect(
+      screen.getByRole("heading", { name: "Admin is temporarily unavailable" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Protected spot form")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to map" })).toHaveAttribute(
+      "href",
+      "/map",
+    );
     expect(console.warn).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({ adminIdConfigured: false }),

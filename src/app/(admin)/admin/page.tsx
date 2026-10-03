@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SpotForm } from "@/components/admin/spot-form/spot-form";
 import { Map } from "@/components/map/map";
 import { AccountButton } from "@/components/auth/account-button";
+import { AdminAccessMessage } from "@/components/admin/admin-access-message";
 
 export const metadata: Metadata = {
   title: "Spots Admin",
@@ -16,7 +16,11 @@ export default async function AdminPage() {
 
   if (!session.isAuthenticated || session.userId !== adminUserId) {
     console.warn("[admin-access] Access check failed", {
-      reason: session.isAuthenticated ? "admin-id-mismatch" : "unauthenticated",
+      reason: !session.isAuthenticated
+        ? "unauthenticated"
+        : !adminUserId
+          ? "admin-not-configured"
+          : "admin-id-mismatch",
       sessionStatus: session.sessionStatus,
       adminIdConfigured: Boolean(adminUserId),
       adminIdHasWhitespace: Boolean(
@@ -30,9 +34,12 @@ export default async function AdminPage() {
 
   const { userId } = await auth.protect();
 
-  // TODO implement admin restriction page. 503
+  if (!adminUserId) {
+    return <AdminAccessMessage unavailable />;
+  }
+
   if (userId !== adminUserId) {
-    notFound();
+    return <AdminAccessMessage />;
   }
 
   return (
