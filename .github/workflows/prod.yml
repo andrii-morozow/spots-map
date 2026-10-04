@@ -14,13 +14,14 @@ concurrency:
 
 jobs:
   checks:
+    environment: Production
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
     env:
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-      ADMIN_USER_ID: ${{ secrets.ADMIN_USER_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout repository
@@ -50,5 +51,12 @@ jobs:
       - name: Run tests
         run: pnpm test:run
 
-      - name: Build
-        run: pnpm build
+      - name: Pull Vercel production configuration
+        run: pnpm exec vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build production deployment
+        run: pnpm exec vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: pnpm exec vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
