@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SpotForm } from "@/components/admin/spot-form/spot-form";
 import { Map } from "@/components/map/map";
 import { AccountButton } from "@/components/auth/account-button";
+import { AdminAccessMessage } from "@/components/admin/admin-access-message";
 
 export const metadata: Metadata = {
   title: "Spots Admin",
@@ -11,11 +11,16 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
+  const adminUserId = process.env.ADMIN_USER_ID;
+
   const { userId } = await auth.protect();
 
-  // TODO implement admin restriction page. 503
-  if (userId !== process.env.ADMIN_USER_ID) {
-    notFound();
+  if (!adminUserId) {
+    return <AdminAccessMessage unavailable />;
+  }
+
+  if (userId !== adminUserId) {
+    return <AdminAccessMessage />;
   }
 
   return (

@@ -1,0 +1,4 @@
+#!/bin/sh
+pnpm type-check &&
+pnpm test:run &&
+pnpm exec vercel env run -e development -- pnpm run build

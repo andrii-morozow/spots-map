@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    environment: Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check JavaScript and TypeScript
+        run: pnpm exec eslint . --max-warnings=0
+
+      - name: Check CSS
+        run: pnpm lint:styles
+
+      - name: Check types
+        run: pnpm type-check
+
+      - name: Run tests
+        run: pnpm test:run
+
+      - name: Pull Vercel production configuration
+        run: pnpm exec vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build production deployment
+        run: pnpm exec vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: pnpm exec vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

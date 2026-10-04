@@ -2,9 +2,11 @@
 
 import type { ComponentProps } from "react";
 import NextImage from "next/image";
+import Link from "next/link";
 import { SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import kindergarten from "@/assets/дитсад.jpg";
 import { AccountButton } from "@/components/auth/account-button";
+import { Button } from "@/components/ui/button";
 
 function CrabButton({
   action,
@@ -92,6 +94,11 @@ export const PublicMap = () => {
           </div>
         </div>
         <h1>Welcome to the Spots Map</h1>
+        {isLoaded && isSignedIn && (
+          <Button asChild className="mt-4">
+            <Link href="/admin">Admin</Link>
+          </Button>
+        )}
         {signedOut && (
           <>
             <p>App is under construction. Come back soon.</p>
