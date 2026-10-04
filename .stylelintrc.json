@@ -17,6 +17,7 @@
         ]
       }
     ],
+    "custom-property-pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*(--line-height)?$",
     "import-notation": "string",
     "lightness-notation": "number",
     "hue-degree-notation": "number",
