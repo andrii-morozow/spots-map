@@ -1,0 +1,6 @@
+.next/
+dist/
+coverage/
+.pnpm-store/
+.fttemplates/
+pnpm-lock.yaml

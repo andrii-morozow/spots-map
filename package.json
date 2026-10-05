@@ -9,6 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint:styles": "stylelint 'src/**/*.css'",
     "lint:styles:fix": "pnpm lint:styles --fix",
     "type-check": "next typegen && tsc --noEmit",
@@ -46,10 +48,12 @@
     "@vitejs/plugin-react": "6.0.2",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.7",
+    "eslint-config-prettier": "10.1.8",
     "jsdom": "29.1.1",
     "lint-staged": "^17.6.0",
     "postcss": "8.5.15",
     "prettier": "3.8.3",
+    "prettier-plugin-tailwindcss": "0.8.1",
     "serve": "14.2.6",
     "stylelint": "16.26.1",
     "stylelint-config-standard": "37.0.0",
@@ -60,8 +64,15 @@
     "vitest": "4.1.8"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": "eslint --max-warnings=0",
-    "*.css": "stylelint"
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "prettier --write",
+      "eslint --max-warnings=0"
+    ],
+    "*.css": [
+      "prettier --write",
+      "stylelint"
+    ],
+    "*.{json,jsonc,md,mdx,yml,yaml}": "prettier --write"
   },
   "engines": {
     "node": "24.x"
