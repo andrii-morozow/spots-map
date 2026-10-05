@@ -1,0 +1,5 @@
+{
+  "files.associations": {
+    "**/.fttemplates/**/*.tsx": "plaintext"
+  }
+}
