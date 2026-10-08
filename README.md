@@ -9,12 +9,41 @@ Commit `pnpm-lock.yaml` when dependencies change.
 
 ```sh
 pnpm install --frozen-lockfile
+```
+
+Complete the environment setup below before starting the app:
+
+```sh
 pnpm dev
 ```
 
 Open [localhost:3000](http://localhost:3000). Routes live in `src/app`, shared
 components in `src/components`, and custom CSS in `src/styles`. The `@/` alias
 points to `src/` and is shared by TypeScript, Next.js, and Vitest.
+
+## Environment setup
+
+Set these variables in the Vercel project's **Development** environment:
+
+| Variable                            | Value                                    |
+| ----------------------------------- | ---------------------------------------- |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk development publishable key        |
+| `CLERK_SECRET_KEY`                  | Clerk development secret key             |
+| `ADMIN_USER_ID`                     | Clerk user ID allowed to access `/admin` |
+
+Get keys from Clerk's **API keys** page and the user ID from **Users**.
+Sign in and link the Vercel project once:
+
+```sh
+pnpm exec vercel login
+pnpm exec vercel link
+pnpm dev
+```
+
+`pnpm dev` loads the linked project's Development variables. Without Vercel
+access, put the variables in `.env.local` and run `pnpm exec next dev`.
+`.env.local` is ignored by Git; never commit secret keys. Restart after changes.
+Use Clerk production keys in Vercel's Production environment.
 
 ## Checks
 
