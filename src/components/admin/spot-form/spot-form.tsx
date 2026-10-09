@@ -8,6 +8,7 @@ import { DetailsStep } from "./details-step/details-step";
 import { RateStep } from "./rate-step/rate-step";
 import { PhotoStep } from "./photo-step/photo-step";
 import type { SpotFormValues } from "./spot-form.types";
+import { spotFormDemoValues } from "@/mocks/spot-form";
 import {
   getInitialErrors,
   spotFormSchema,
@@ -38,21 +39,7 @@ const initialValues: SpotFormValues = {
   landing: null,
   status: "draft",
   createdBy: "",
-  ...(process.env.NODE_ENV === "development"
-    ? ({
-        title: "North Point Skatepark",
-        description: "A spacious skate spot with rails and smooth concrete.",
-        latitude: "41.3851",
-        longitude: "2.1734",
-        city: "Barcelona",
-        country: "Spain",
-        spotTypes: ["rail"],
-        difficulty: 2,
-        access: 5,
-        runup: 3,
-        landing: 4,
-      } satisfies Partial<SpotFormValues>)
-    : {}),
+  ...(process.env.NODE_ENV === "development" ? spotFormDemoValues : {}),
 };
 
 export function SpotForm() {
@@ -151,11 +138,11 @@ export function SpotForm() {
       data-step={step}
     >
       <div className={`${styles.content} flex w-full flex-col text-left`}>
-        <header className="flex flex-col gap-4 py-0 px-1">
+        <header className="flex flex-col gap-4 px-1 py-0">
           <h1 className="text-[32px] leading-[30px] font-semibold">Add spot</h1>
           <p className="text-base leading-5 text-neutral-500">Step {step}/3</p>
         </header>
-        <div className={`${styles.scrollArea} py-0 px-1`} key={step}>
+        <div className={`${styles.scrollArea} px-1 py-0`} key={step}>
           <form
             onSubmit={handleSubmit}
             noValidate

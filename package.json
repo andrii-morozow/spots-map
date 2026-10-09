@@ -16,7 +16,8 @@
     "type-check": "next typegen && tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "db:push": "vercel env run -e development -- drizzle-kit push"
+    "db:push": "vercel env run -e development -- drizzle-kit push",
+    "db:seed": "vercel env run -e development -- tsx src/lib/db/seed.ts"
   },
   "browserslist": [
     "defaults and fully supports es6-module"

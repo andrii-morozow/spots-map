@@ -1,0 +1,40 @@
+import type { NewSpot } from "@/lib/db/schema";
+
+export const seedSpots: NewSpot[] = [
+  {
+    title: "Demo: Kyiv skate spot",
+    slug: "demo-kyiv-skate-spot",
+    latitude: 50.4501,
+    longitude: 30.5234,
+    city: "Kyiv",
+    country: "Ukraine",
+    sportTypes: ["skateboarding", "rollerblading"],
+    spotTypes: ["park", "street"],
+    difficulty: "easy",
+    status: "published",
+  },
+  {
+    title: "Demo: Kyiv training spot",
+    slug: "demo-kyiv-training-spot",
+    latitude: 50.4547,
+    longitude: 30.5166,
+    city: "Kyiv",
+    country: "Ukraine",
+    sportTypes: ["skateboarding"],
+    spotTypes: ["street"],
+    difficulty: "medium",
+    status: "draft",
+  },
+  {
+    title: "Demo: Kyiv archived spot",
+    slug: "demo-kyiv-archived-spot",
+    latitude: 50.443,
+    longitude: 30.521,
+    city: "Kyiv",
+    country: "Ukraine",
+    sportTypes: ["rollerblading"],
+    spotTypes: ["park"],
+    difficulty: "unknown",
+    status: "archived",
+  },
+];
