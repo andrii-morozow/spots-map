@@ -13,7 +13,9 @@ import { spotDifficultyEnum, spotStatusEnum } from "./enums";
 
 export const spots = pgTable(
   "spots",
+  // TODO: destruct fields config
   {
+    // TODO understand where id will be defined. remove from here if needed
     id: uuid("id").defaultRandom().primaryKey(),
 
     title: text("title").notNull(),
@@ -52,6 +54,7 @@ export const spots = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
+  // TODO: destruct validation
   (table) => [
     check("spots_latitude_range", sql`${table.latitude} between -90 and 90`),
     check(
