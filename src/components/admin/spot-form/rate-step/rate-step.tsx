@@ -23,7 +23,9 @@ export function RateStep({ formData, updateField, errors }: RateStepProps) {
         >
           <legend className={styles.legend}>
             {label}
-            <span aria-hidden="true"> *</span>
+            {formData.status === "published" && (
+              <span aria-hidden="true"> *</span>
+            )}
           </legend>
           <div className={styles.row}>
             <div className={styles.options} data-invalid={Boolean(errors[key])}>
@@ -35,7 +37,7 @@ export function RateStep({ formData, updateField, errors }: RateStepProps) {
                     name={`${id}-${key}`}
                     value={rating}
                     checked={formData[key] === rating}
-                    required
+                    required={formData.status === "published"}
                     aria-describedby={`${id}-${key}-description`}
                     onChange={() => updateField(key, rating)}
                   />

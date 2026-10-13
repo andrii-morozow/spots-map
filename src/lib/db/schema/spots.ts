@@ -4,12 +4,15 @@ import {
   doublePrecision,
   index,
   pgTable,
+  smallint,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { spotDifficultyEnum, spotStatusEnum } from "./enums";
+import { spotStatusEnum } from "./enums";
+import type { Rating } from "@/constants/spot-ratings";
+import type { SportType, SpotType } from "@/constants/spot";
 
 export const spots = pgTable(
   "spots",
@@ -31,15 +34,20 @@ export const spots = pgTable(
 
     sportTypes: text("sport_types")
       .array()
+      .$type<SportType[]>()
       .notNull()
       .default(sql`'{}'::text[]`),
 
     spotTypes: text("spot_types")
       .array()
+      .$type<SpotType[]>()
       .notNull()
       .default(sql`'{}'::text[]`),
 
-    difficulty: spotDifficultyEnum("difficulty").notNull().default("unknown"),
+    difficulty: smallint("difficulty").$type<Rating>(),
+    access: smallint("access").$type<Rating>(),
+    runup: smallint("runup").$type<Rating>(),
+    landing: smallint("landing").$type<Rating>(),
 
     status: spotStatusEnum("status").notNull().default("draft"),
 
@@ -56,6 +64,17 @@ export const spots = pgTable(
   },
   // TODO: destruct validation
   (table) => [
+    check("spots_difficulty_range", sql`${table.difficulty} between 1 and 5`),
+    check("spots_access_range", sql`${table.access} between 1 and 5`),
+    check("spots_runup_range", sql`${table.runup} between 1 and 5`),
+    check("spots_landing_range", sql`${table.landing} between 1 and 5`),
+    check(
+      "spots_published_ratings",
+      sql`${table.status} <> 'published' or (
+      ${table.difficulty} is not null and ${table.access} is not null
+      and ${table.runup} is not null and ${table.landing} is not null
+    )`,
+    ),
     check("spots_latitude_range", sql`${table.latitude} between -90 and 90`),
     check(
       "spots_longitude_range",

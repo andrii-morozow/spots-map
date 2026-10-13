@@ -7,8 +7,9 @@ import {
   ValidationError,
   type AnyObjectSchema,
 } from "yup";
-import { spotTypes } from "@/constants/spot";
-import type { Rating, SpotType } from "@/types/spot";
+import { spotTypes, sportTypes } from "@/constants/spot";
+import type { Rating, SpotType, SportType } from "@/types/spot";
+import { ratings } from "@/constants/spot-ratings";
 import type { SpotFormValues } from "./spot-form.types";
 
 function coordinateSchema(label: string, min: number, max: number) {
@@ -25,12 +26,26 @@ function coordinateSchema(label: string, min: number, max: number) {
 
 function ratingSchema(label: string) {
   const message = `Select a rating for ${label}.`;
-  return mixed<Rating>().oneOf([1, 2, 3, 4, 5], message).required(message);
+  return mixed<Rating>()
+    .oneOf(ratings, message)
+    .nullable()
+    .default(null)
+    .when("status", {
+      is: "published",
+      then: (schema) => schema.required(message),
+    });
 }
 
 export const detailsSchema = object({
   title: string().trim().required("Enter a name."),
   city: string().trim().required("Enter a city."),
+  sportTypes: array()
+    .of(
+      mixed<SportType>()
+        .oneOf(sportTypes, "Choose a supported sport.")
+        .required(),
+    )
+    .default([]),
   spotTypes: array()
     .of(
       mixed<SpotType>()

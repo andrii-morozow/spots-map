@@ -1,12 +1,9 @@
 import type { SpotFormValues } from "./spot-form.types";
-import { toSpot } from "./spot-form.utils";
+import { toSpotInput } from "./spot-form.utils";
 
 export function saveSpot(values: SpotFormValues) {
-  const payload = toSpot(values, {
-    id: crypto.randomUUID(),
-    timestamp: new Date().toISOString(),
-  });
-
+  const payload = toSpotInput(values);
+  // API persistence and photo uploads are implemented in their own sprints.
   console.log("spot payload", payload);
   return payload;
 }

@@ -90,7 +90,7 @@ describe("SpotForm", () => {
     expect(longitude).toHaveValue("");
   });
 
-  it("requires details, all four ratings, and a photo before submitting", async () => {
+  it("preserves all four ratings and submits API input without server-owned fields", async () => {
     const user = userEvent.setup();
     render(<SpotForm />);
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
@@ -128,12 +128,6 @@ describe("SpotForm", () => {
     await rate(user, "Access", "5");
     await rate(user, "Run-up", "3");
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Next" }));
-    expect(screen.queryByLabelText("Photo URL 1")).not.toBeInTheDocument();
-    expect(screen.getByRole("group", { name: "Landing" })).toHaveAttribute(
-      "aria-invalid",
-      "true",
-    );
     await rate(user, "Landing", "4");
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
@@ -177,18 +171,50 @@ describe("SpotForm", () => {
         expect.objectContaining({
           title: "North Point Skatepark",
           city: "Barcelona",
-          spot_types: ["rail"],
+          spotTypes: ["rail"],
           latitude: 41.38512345,
           longitude: 2.1734,
           difficulty: 2,
           access: 5,
           runup: 3,
           landing: 4,
-          photos: [expect.stringMatching(/^data:image\/png;base64,/)],
         }),
       );
+      const payload = log.mock.calls[0][1];
+      expect(payload).not.toHaveProperty("id");
+      expect(payload).not.toHaveProperty("createdBy");
+      expect(payload).not.toHaveProperty("createdAt");
+      expect(payload).not.toHaveProperty("photos");
       expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
       expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("");
+    } finally {
+      log.mockRestore();
+    }
+  });
+
+  it("can submit a draft with all ratings unanswered", async () => {
+    const user = userEvent.setup();
+    render(<SpotForm />);
+    await fillDetails(user);
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await user.upload(
+      screen.getByLabelText("Choose photos"),
+      new File(["photo"], "spot.png", { type: "image/png" }),
+    );
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await user.click(screen.getByRole("button", { name: "Submit spot" }));
+      expect(log).toHaveBeenCalledWith(
+        "spot payload",
+        expect.objectContaining({
+          status: "draft",
+          difficulty: null,
+          access: null,
+          runup: null,
+          landing: null,
+        }),
+      );
     } finally {
       log.mockRestore();
     }
@@ -247,9 +273,7 @@ describe("SpotForm", () => {
     try {
       fireEvent.submit(container.querySelector("form")!);
       expect(log).not.toHaveBeenCalled();
-      expect(
-        screen.getByRole("group", { name: "Difficulty" }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("textbox", { name: "Name" })).toBeInTheDocument();
       fireEvent.submit(container.querySelector("form")!);
       expect(log).not.toHaveBeenCalled();
     } finally {

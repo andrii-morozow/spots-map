@@ -1,36 +1,34 @@
-import type { Spot } from "@/types/spot";
+import {
+  spotCreateSchema,
+  type SpotCreateInput,
+} from "@/features/spots/spot.schemas";
 import { spotFormSchema } from "./spot-form.validation";
 import type { SpotFormValues } from "./spot-form.types";
 
-export function toSpot(
-  values: SpotFormValues,
-  metadata: { id: string; timestamp: string },
-): Spot {
-  const validated = spotFormSchema.validateSync(values, { abortEarly: false });
-  return {
-    id: metadata.id,
+export function toSpotInput(values: SpotFormValues): SpotCreateInput {
+  spotFormSchema.validateSync(values, { abortEarly: false });
+  return spotCreateSchema.parse({
     title: values.title.trim(),
-    slug: values.title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, ""),
+    slug:
+      values.slug.trim() ||
+      values.title
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") ||
+      "spot",
     description: values.description.trim() || null,
     latitude: Number(values.latitude),
     longitude: Number(values.longitude),
     address: values.address.trim() || null,
     city: values.city.trim() || null,
     country: values.country.trim() || null,
-    sport_types: [...values.sportTypes],
-    spot_types: [...values.spotTypes],
-    difficulty: validated.difficulty,
-    access: validated.access,
-    runup: validated.runup,
-    landing: validated.landing,
+    sportTypes: [...values.sportTypes],
+    spotTypes: [...values.spotTypes],
+    difficulty: values.difficulty,
+    access: values.access,
+    runup: values.runup,
+    landing: values.landing,
     status: values.status,
-    created_by: values.createdBy.trim() || null,
-    photos: values.photos.filter((photo) => photo.trim().length > 0),
-    created_at: metadata.timestamp,
-    updated_at: metadata.timestamp,
-  };
+  });
 }

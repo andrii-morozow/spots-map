@@ -21,10 +21,37 @@ describe("spot form schemas", () => {
     expect(ratingsSchema.isValidSync(validRatings)).toBe(true);
   });
 
-  it.each([null, 0, 6, 1.5, "3"])("rejects invalid rating %s", (rating) => {
+  it.each([0, 6, 1.5, "3"])("rejects invalid rating %s", (rating) => {
     for (const field of Object.keys(validRatings)) {
       expect(
         ratingsSchema.isValidSync({ ...validRatings, [field]: rating }),
+      ).toBe(false);
+    }
+  });
+
+  it("allows unanswered draft ratings but requires every published rating", () => {
+    const unanswered = {
+      difficulty: null,
+      access: null,
+      runup: null,
+      landing: null,
+    };
+    expect(ratingsSchema.isValidSync({ ...unanswered, status: "draft" })).toBe(
+      true,
+    );
+    expect(
+      ratingsSchema.isValidSync({ ...unanswered, status: "published" }),
+    ).toBe(false);
+    expect(
+      ratingsSchema.isValidSync({ ...validRatings, status: "published" }),
+    ).toBe(true);
+    for (const field of Object.keys(validRatings)) {
+      expect(
+        ratingsSchema.isValidSync({
+          ...validRatings,
+          status: "published",
+          [field]: null,
+        }),
       ).toBe(false);
     }
   });

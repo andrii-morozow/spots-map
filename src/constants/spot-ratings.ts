@@ -1,4 +1,6 @@
 export const ratings = [1, 2, 3, 4, 5] as const;
+export type Rating = (typeof ratings)[number];
+export const ratingKeys = ["difficulty", "access", "runup", "landing"] as const;
 export const fields = [
   {
     key: "difficulty",

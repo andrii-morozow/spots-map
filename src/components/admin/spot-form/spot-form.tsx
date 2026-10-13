@@ -38,7 +38,7 @@ const initialValues: SpotFormValues = {
   runup: null,
   landing: null,
   status: "draft",
-  createdBy: "",
+  slug: "",
   ...(process.env.NODE_ENV === "development" ? spotFormDemoValues : {}),
 };
 

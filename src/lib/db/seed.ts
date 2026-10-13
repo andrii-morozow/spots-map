@@ -29,13 +29,15 @@ async function main() {
   const db = drizzle(client);
 
   try {
-    const inserted = await db
-      .insert(spots)
-      .values(seedSpots)
-      .onConflictDoNothing({ target: spots.slug })
-      .returning({ slug: spots.slug });
-
-    console.log(`Seed complete: inserted ${inserted.length} spots.`);
+    await db.transaction(async (transaction) => {
+      for (const fixture of seedSpots) {
+        await transaction.insert(spots).values(fixture).onConflictDoUpdate({
+          target: spots.slug,
+          set: fixture,
+        });
+      }
+    });
+    console.log(`Seed complete: ensured ${seedSpots.length} demo spots.`);
   } finally {
     await client.end();
   }

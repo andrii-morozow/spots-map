@@ -1,17 +1,7 @@
 import { pgEnum } from "drizzle-orm/pg-core";
+import { spotStatuses } from "@/constants/spot";
 
-export const spotDifficultyEnum = pgEnum("spot_difficulty", [
-  "easy",
-  "medium",
-  "hard",
-  "unknown",
-]);
-
-export const spotStatusEnum = pgEnum("spot_status", [
-  "draft",
-  "published",
-  "archived",
-]);
+export const spotStatusEnum = pgEnum("spot_status", spotStatuses);
 
 export const imageUploadStatusEnum = pgEnum("image_upload_status", [
   "pending",

@@ -16,3 +16,9 @@ export const sportTypes = [
   "basketball",
   "fitness",
 ] as const;
+
+export const spotStatuses = ["draft", "published", "archived"] as const;
+
+export type SportType = (typeof sportTypes)[number];
+export type SpotType = (typeof spotTypes)[number];
+export type SpotStatus = (typeof spotStatuses)[number];
