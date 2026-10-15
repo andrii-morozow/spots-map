@@ -1,4 +1,4 @@
-import type { NewSpot } from "@/lib/db/schema";
+import type { NewSpot } from "@/server/db/schema";
 
 export const seedSpots: NewSpot[] = [
   {
