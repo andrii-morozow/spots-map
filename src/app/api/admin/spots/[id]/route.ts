@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/server/auth/require-admin";
 import { spotIdSchema, spotUpdateSchema } from "@/features/spots/spot.schemas";
 import {
+  archiveSpot,
   getAdminSpotById,
   updateSpot,
 } from "@/features/spots/server/spot.service";
@@ -142,6 +143,58 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     return Response.json({ data: updatedSpot });
+  } catch (error: unknown) {
+    return spotErrorResponse(error);
+  }
+}
+
+export async function DELETE(_request: Request, context: RouteContext) {
+  const { params } = context;
+
+  try {
+    const access = await requireAdmin();
+
+    if (!access.ok) {
+      return Response.json({ error: access.error }, { status: access.status });
+    }
+
+    const { id } = await params;
+
+    const idResult = spotIdSchema.safeParse(id);
+
+    if (!idResult.success) {
+      return Response.json(
+        {
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid spot ID",
+            details: [
+              {
+                field: "id",
+                message: "Must be a valid UUID",
+              },
+            ],
+          },
+        },
+        { status: 400 },
+      );
+    }
+
+    const archivedSpot = await archiveSpot(idResult.data);
+
+    if (!archivedSpot) {
+      return Response.json(
+        {
+          error: {
+            code: "NOT_FOUND",
+            message: "Spot not found",
+          },
+        },
+        { status: 404 },
+      );
+    }
+
+    return Response.json({ data: archivedSpot });
   } catch (error: unknown) {
     return spotErrorResponse(error);
   }
