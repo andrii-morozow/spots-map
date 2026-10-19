@@ -93,7 +93,22 @@ export async function PATCH(request: Request, context: RouteContext) {
       );
     }
 
-    const body = await request.json();
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return Response.json(
+        {
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid JSON body",
+          },
+        },
+        { status: 400 },
+      );
+    }
+
     const bodyResult = spotUpdateSchema.safeParse(body);
 
     if (!bodyResult.success) {
